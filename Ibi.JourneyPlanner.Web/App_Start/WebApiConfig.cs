@@ -10,6 +10,12 @@ namespace Ibi.JourneyPlanner.Web
         public static void Register(HttpConfiguration config)
         {
             config.Routes.MapHttpRoute(
+                name: null,
+                routeTemplate: "api/routing/pointtopoint",
+                defaults: new { controller = "Routing", action = "PointToPoint" }
+            );
+
+            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
