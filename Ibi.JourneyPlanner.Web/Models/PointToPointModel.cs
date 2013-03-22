@@ -12,5 +12,7 @@ namespace Ibi.JourneyPlanner.Web.Models
 
         public double ToLatitude { get; set; }
         public double ToLongitude { get; set; }
+
+        public string TransportMode { get; set; }
     }
 }

@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="RoutingController.cs" company="IBI Group">
+//   (c) Copyright IBI Group. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+// </copyright>
+// <summary>
+//   Defines the RoutingController type.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Ibi.JourneyPlanner.Web.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Web.Http;
+
     using GeoJSON.Net;
     using GeoJSON.Net.Feature;
     using GeoJSON.Net.Geometry;
@@ -20,17 +29,63 @@ namespace Ibi.JourneyPlanner.Web.Controllers
 
     public class RoutingController : ApiController
     {
+        public IEnumerable<string> GetTransportModes()
+        {
+            var values = Enum.GetValues(typeof(VehicleEnum));
+            return values.Cast<VehicleEnum>().Select(value => value.ToString()).ToList();
+        }
+
+        [HttpPost]
+        public LocationModel GetClosestPointTo(ResolvePointModel resolvePointModel)
+        {
+            var router = Engine.Instance;
+            var transportMode = this.ResolveVehicleEnum(resolvePointModel.TransportMode);
+
+            if (!router.SupportsVehicle(transportMode))
+            {
+                throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent("Tranport mode not supported."),
+                    ReasonPhrase = string.Format("Transport mode {0} is not supported.", transportMode.ToString())
+                });
+            }
+
+            var point = router.Resolve(transportMode, new GeoCoordinate(resolvePointModel.Latitude, resolvePointModel.Longitude));
+            if (point == null)
+            {
+                throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent("Point cannot be mapped"),
+                    ReasonPhrase = string.Format("There are no viable positions near this point.")
+                });
+            }
+
+            return new LocationModel(point.Location.Latitude, point.Location.Longitude);
+        }
+
         [HttpPost]
         public ResultSet PointToPoint(PointToPointModel pointToPointModel)
         {
             var router = Engine.Instance;
 
-            // resolve both points; find the closest routable road.
-            RouterPoint point1 = router.Resolve(VehicleEnum.Car, pointToPointModel.ToStartGeoCoordinate());
-            RouterPoint point2 = router.Resolve(VehicleEnum.Car, pointToPointModel.ToEndCoordinate());
+            // Get transport mode
+            var transportMode = this.ResolveVehicleEnum(pointToPointModel.TransportMode);
+
+            if (!router.SupportsVehicle(transportMode))
+            {
+                throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent("Tranport mode not supported."),
+                    ReasonPhrase = string.Format("Transport mode {0} is not supported.", transportMode.ToString())
+                });
+            }
+
+            // resolve both points; find the closest routable point.
+            var startPoint = router.Resolve(transportMode, pointToPointModel.ToStartGeoCoordinate());
+            var endPoint = router.Resolve(transportMode, pointToPointModel.ToEndCoordinate());
 
             // calculate route.
-            var route = router.Calculate(VehicleEnum.Car, point1, point2);
+            var route = router.Calculate(transportMode, startPoint, endPoint);
 
             var coordinates = route.Entries
                 .Select(x => new GeographicPosition(x.Latitude, x.Longitude))
@@ -42,10 +97,23 @@ namespace Ibi.JourneyPlanner.Web.Controllers
                 lineString,
                 new Dictionary<string, object>
                     {
-                        { "name", "Test route result." }
+                        { "name", "Test route result." },
+                        { "distance", route.TotalDistance },
+                        { "journeytime", route.TotalTime },
                     });
 
             return new ResultSet(feature);
+        }
+
+        private VehicleEnum ResolveVehicleEnum(string transportMode, VehicleEnum defaultType = VehicleEnum.Car)
+        {
+            VehicleEnum mode;
+            if (!Enum.TryParse(transportMode, true, out mode))
+            {
+                mode = defaultType;
+            }
+
+            return mode;
         }
     }
 }

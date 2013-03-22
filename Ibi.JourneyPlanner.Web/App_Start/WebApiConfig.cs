@@ -11,8 +11,8 @@ namespace Ibi.JourneyPlanner.Web
         {
             config.Routes.MapHttpRoute(
                 name: null,
-                routeTemplate: "api/routing/pointtopoint",
-                defaults: new { controller = "Routing", action = "PointToPoint" }
+                routeTemplate: "api/routing/{action}",
+                defaults: new { controller = "Routing" }
             );
 
             config.Routes.MapHttpRoute(
