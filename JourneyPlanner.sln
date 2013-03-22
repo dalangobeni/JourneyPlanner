@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4694F9ED-82F0-488F-851D-3E1C3BA3889F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{177BF323-7686-4F13-B585-1807E8224215}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ibi.JourneyPlanner.Web", "Ibi.JourneyPlanner.Web\Ibi.JourneyPlanner.Web.csproj", "{EFB823A7-5419-49AC-AF7B-827D2D628FC5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EFB823A7-5419-49AC-AF7B-827D2D628FC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFB823A7-5419-49AC-AF7B-827D2D628FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFB823A7-5419-49AC-AF7B-827D2D628FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFB823A7-5419-49AC-AF7B-827D2D628FC5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{177BF323-7686-4F13-B585-1807E8224215} = {4694F9ED-82F0-488F-851D-3E1C3BA3889F}
+		{EFB823A7-5419-49AC-AF7B-827D2D628FC5} = {177BF323-7686-4F13-B585-1807E8224215}
+	EndGlobalSection
+EndGlobal
