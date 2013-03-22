@@ -99,7 +99,7 @@ namespace Ibi.JourneyPlanner.Web.Controllers
                     {
                         { "name", "Test route result." },
                         { "distance", route.TotalDistance },
-                        { "journeytime", route.TotalTime },
+                        { "journeytime", TimeSpan.FromSeconds(route.TotalTime).ToString() },
                     });
 
             return new ResultSet(feature);

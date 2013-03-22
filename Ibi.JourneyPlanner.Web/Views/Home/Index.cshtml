@@ -19,16 +19,26 @@
     <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
     <script>
 
+        function roundNumber(number, digits) {
+            var multiple = Math.pow(10, digits);
+            var rndedNum = Math.round(number * multiple) / multiple;
+            return rndedNum;
+        }
+        
         function onEachFeature(feature, layer) {
             if (feature.properties) {
-                var distance = feature.properties.distance;
-                var journeyTimeSeconds = feature.properties.journeytime;
-                
-                layer.bindPopup("Distance: " + distance + "<br />Time: " + journeyTimeSeconds);
-            }
 
-            if (feature.properties && feature.properties.name) {
-                layer.bindPopup(feature.properties.name);
+                var props = feature.properties;
+                
+                if (props.distance && props.journeytime) {
+                    var distance = roundNumber(feature.properties.distance / 1000, 2);
+                    var journeyTime = feature.properties.journeytime;
+
+                    layer.bindPopup("<b>Distance:</b><br>" + distance + " Km<br><br><b>Journey Time:</b><br>" + journeyTime);
+                }
+                else if (props.name) {
+                    layer.bindPopup(feature.properties.name);
+                }
             }
         }
 
@@ -73,13 +83,8 @@
 
                         var geojsonFeature = {
                             "type": "Feature",
-                            "properties": {
-                                "name": thisItem.name
-                            },
-                            "geometry": {
-                                "type": thisItem.geom.type,
-                                "coordinates": thisItem.geom.coordinates
-                            }
+                            "properties": thisItem.properties,
+                            "geometry": thisItem.geom
                         };
 
                         var myStyle = {
