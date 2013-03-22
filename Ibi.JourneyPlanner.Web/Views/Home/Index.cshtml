@@ -1,45 +1,113 @@
-﻿<div id="body">
-    <section class="featured">
-        <div class="content-wrapper">
-            <hgroup class="title">
-                <h1>Welcome to ASP.NET Web API!</h1>
-                <h2>Modify the code in this template to jump-start your ASP.NET Web API development.</h2>
-            </hgroup>
-            <p>
-                ASP.NET Web API allows you to expose your applications, data and services to the
-                web directly over HTTP.
-            </p>
-            <p>
-                To learn more about ASP.NET Web API visit the
-                <a href="http://go.microsoft.com/fwlink/?LinkID=238195" title="ASP.NET Web API Website">ASP.NET Web API Website</a>.
-                The page features <mark>videos, tutorials, and samples</mark> to help you get the most from ASP.NET Web API.
-                If you have any questions about ASP.NET Web API, visit
-                <a href="http://go.microsoft.com/fwlink/?LinkID=238196" title="ASP.NET Web API Forum">our forums</a>.
-            </p>
-        </div>
-    </section>
-    <section class="content-wrapper main-content clear-fix">
-        <h3>We suggest the following steps:</h3>
-        <ol class="round">
-            <li class="one">
-                <h5>Getting Started</h5>
-                ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-                a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-                is an ideal platform for building RESTful applications on the .NET Framework.
-                <a href="http://go.microsoft.com/fwlink/?LinkId=245160">Learn more…</a>
-            </li>
+﻿@{
+    ViewBag.Title = "Index";
+}
 
-            <li class="two">
-                <h5>Add NuGet packages and jump-start your coding</h5>
-                NuGet makes it easy to install and update free libraries and tools.
-                <a href="http://go.microsoft.com/fwlink/?LinkId=245161">Learn more…</a>
-            </li>
-            <li class="three">
-                <h5>Find Web Hosting</h5>
-                You can easily find a web hosting company that offers the right mix of features
-                and price for your applications.
-                <a href="http://go.microsoft.com/fwlink/?LinkId=245164">Learn more…</a>
-            </li>
-        </ol>
-    </section>
-</div>
+@section css {
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css" />
+     <!--[if lte IE 8]>
+         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
+     <![endif]-->
+    
+    <style>
+        #map {
+            height: 560px;
+        }
+    </style>
+}
+
+@section scripts {
+    <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+    <script>
+        // create a map in the "map" div, set the view to a given place and zoom
+        var map = L.map('map').setView([53.4791, -2.2457], 13);
+
+        // add an OpenStreetMap tile layer
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function onEachFeature(feature, layer) {
+            // does this feature have a property named popupContent?
+            if (feature.properties && feature.properties.name) {
+                layer.bindPopup(feature.properties.name);
+            }
+        }
+
+        function getRequestUrl(perPage, pageNumber) {
+            // var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/nodes?geom&osm::amenity=parking&per_page=" + perPage;
+            var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/ptstops?geom&osm::amenity=parking&per_page=" + perPage;
+            if (pageNumber) {
+                url += "&page=" + pageNumber;
+            }
+
+            return url;
+        }
+
+        function loadPageBlock(numberOfSitesPerPage, pageNumber) {
+            pageNumber = pageNumber || 1;
+
+            //$.getJSON(getRequestUrl(numberOfSitesPerPage, pageNumber), function (response) {
+            $.getJSON("/api/Routing", function (response) {
+                if (response && response.results) {
+                    for (var i = response.results.length - 1; i >= 0; i--) {
+                        var thisItem = response.results[i];
+
+                        if (true || thisItem.name) {
+
+                            //var points = [];
+
+                            //var coordinateList = thisItem.geom.coordinates;
+                            //for (var j = coordinateList.length - 1; j >= 0; j--) {
+                            //    var thisCoord = coordinateList[j];
+                            //    var point = [];
+                            //    point.push(thisCoord.Longitude);
+                            //    point.push(thisCoord.Latitude);
+
+                            //    points.push(point);
+                            //}
+
+                            // points = [[-100, 40], [-105, 45], [-110, 55]];
+                            var geojsonFeature = {
+                                "type": "Feature",
+                                "properties": {
+                                    "name": thisItem.name,
+                                    "cdk_id": "1", // thisItem.cdk_id,
+                                    "layer_id": "5" // thisItem.layer_id
+                                },
+                                "geometry": {
+                                    "type": thisItem.geom.type,
+                                    "coordinates": thisItem.geom.coordinates
+                                }
+                            };
+
+                            var myStyle = {
+                                "color": "#ff7800",
+                                "weight": 5,
+                                "opacity": 1
+                            };
+
+                            L.geoJson(geojsonFeature, {
+                                style: myStyle,
+                                onEachFeature: onEachFeature
+                            }).addTo(map);
+                        }
+                    }
+
+                    var nextPage = response.next_page;
+                    if (nextPage && nextPage > 0) {
+                        loadPageBlock(numberOfSitesPerPage, nextPage);
+                    }
+                }
+            });
+        }
+
+        // Load all of the routes
+        var numberOfSitesPerPage = 500;
+
+        loadPageBlock(numberOfSitesPerPage);
+    </script>
+}
+
+<h1>API Tests</h1>
+
+<div id="map"></div>

@@ -7,15 +7,18 @@ using System.Web.Http;
 
 namespace Ibi.JourneyPlanner.Web.Controllers
 {
+    using GeoJSON.Net;
+    using GeoJSON.Net.Feature;
+    using GeoJSON.Net.Geometry;
+
     using Ibi.JourneyPlanner.Web.Code;
 
     using OsmSharp.Routing.Core;
     using OsmSharp.Tools.Math.Geo;
-    using OsmSharp.Tools.Xml.Kml.v2_0;
 
     public class RoutingController : ApiController
     {
-        public object Get()
+        public ResultSet Get()
         {
             var router = Engine.Instance;
 
@@ -26,22 +29,20 @@ namespace Ibi.JourneyPlanner.Web.Controllers
             // calculate route.
             var route = router.Calculate(VehicleEnum.Car, point1, point2);
 
-            //var coordinates = route.Entries
-            //    .Select(x => new GeographicPosition(x.Latitude, x.Longitude))
-            //    .ToList();
+            var coordinates = route.Entries
+                .Select(x => new GeographicPosition(x.Latitude, x.Longitude))
+                .ToList();
 
-            //var lineString = new LineString(new List<IPosition>(coordinates));
+            var lineString = new LineString(coordinates);
 
-            //var feature = new Feature(
-            //    lineString,
-            //    new Dictionary<string, object>
-            //        {
-            //            { "name", "Test route result." }
-            //        });
+            var feature = new Feature(
+                lineString,
+                new Dictionary<string, object>
+                    {
+                        { "name", "Test route result." }
+                    });
 
-            //return new GeoResult(feature);
-
-            return null;
+            return new ResultSet(feature);
         }
     }
 }
