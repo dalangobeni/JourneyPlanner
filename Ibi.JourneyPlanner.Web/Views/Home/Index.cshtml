@@ -47,50 +47,32 @@
             pageNumber = pageNumber || 1;
 
             //$.getJSON(getRequestUrl(numberOfSitesPerPage, pageNumber), function (response) {
-            $.getJSON("/api/Routing", function (response) {
+            $.getJSON("/api/Routing", function(response) {
                 if (response && response.results) {
                     for (var i = response.results.length - 1; i >= 0; i--) {
                         var thisItem = response.results[i];
 
-                        if (true || thisItem.name) {
+                        var geojsonFeature = {
+                            "type": "Feature",
+                            "properties": {
+                                "name": thisItem.name
+                            },
+                            "geometry": {
+                                "type": thisItem.geom.type,
+                                "coordinates": thisItem.geom.coordinates
+                            }
+                        };
 
-                            //var points = [];
+                        var myStyle = {
+                            "color": "#ff7800",
+                            "weight": 5,
+                            "opacity": 1
+                        };
 
-                            //var coordinateList = thisItem.geom.coordinates;
-                            //for (var j = coordinateList.length - 1; j >= 0; j--) {
-                            //    var thisCoord = coordinateList[j];
-                            //    var point = [];
-                            //    point.push(thisCoord.Longitude);
-                            //    point.push(thisCoord.Latitude);
-
-                            //    points.push(point);
-                            //}
-
-                            // points = [[-100, 40], [-105, 45], [-110, 55]];
-                            var geojsonFeature = {
-                                "type": "Feature",
-                                "properties": {
-                                    "name": thisItem.name,
-                                    "cdk_id": "1", // thisItem.cdk_id,
-                                    "layer_id": "5" // thisItem.layer_id
-                                },
-                                "geometry": {
-                                    "type": thisItem.geom.type,
-                                    "coordinates": thisItem.geom.coordinates
-                                }
-                            };
-
-                            var myStyle = {
-                                "color": "#ff7800",
-                                "weight": 5,
-                                "opacity": 1
-                            };
-
-                            L.geoJson(geojsonFeature, {
-                                style: myStyle,
-                                onEachFeature: onEachFeature
-                            }).addTo(map);
-                        }
+                        L.geoJson(geojsonFeature, {
+                            style: myStyle,
+                            onEachFeature: onEachFeature
+                        }).addTo(map);
                     }
 
                     var nextPage = response.next_page;
@@ -106,8 +88,8 @@
 
         loadPageBlock(numberOfSitesPerPage);
     </script>
-}
+    }
 
-<h1>API Tests</h1>
+    <h1>API Tests</h1>
 
-<div id="map"></div>
+    <div id="map"></div>
