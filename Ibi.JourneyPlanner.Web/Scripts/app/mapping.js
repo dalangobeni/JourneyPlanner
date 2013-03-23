@@ -119,7 +119,7 @@
             var position = { lat: point.Latitude, lng: point.Longitude };
             L.marker(position).addTo(map);
 
-            if (routingPoints.length == 0) {
+            if (routingPoints.length === 0) {
                 routingPoints.push(position);
             } else {
                 routingPoints.push(position);
