@@ -62,11 +62,11 @@
         return false;
     }
 
-    function forEachLayerIcon(feature, layer) {
+    function forEachLayerIcon(feature, layer, color) {
         if (feature.properties) {
             var props = feature.properties;
             if (props.name) {
-                var content = "<h1>" + props.name + "</h1>";
+                var content = "<h1 style='color: " + color + "'>" + props.name + "</h1>";
 
                 //var links = [];
                 //links.push({ text: "Start Route", action: "startRoute" });
@@ -174,7 +174,9 @@
                                 return L.marker(latlng, { icon: geojsonMarkerOptions });
                             },
                             style: myStyle,
-                            onEachFeature: forEachLayerIcon
+                            onEachFeature: function (featureItem, layerItem) {
+                                forEachLayerIcon(featureItem, layerItem, color);
+                            }
                         }).addTo(layer);
                     }
                 }
