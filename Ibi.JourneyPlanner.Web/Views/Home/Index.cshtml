@@ -17,130 +17,18 @@
 
 @section scripts {
     <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+    @Scripts.Render("~/bundles/app")
     <script>
 
-        function roundNumber(number, digits) {
-            var multiple = Math.pow(10, digits);
-            var rndedNum = Math.round(number * multiple) / multiple;
-            return rndedNum;
-        }
-        
-        function onEachFeature(feature, layer) {
-            if (feature.properties) {
-
-                var props = feature.properties;
-                
-                if (props.distance && props.journeytime) {
-                    var distance = roundNumber(feature.properties.distance / 1000, 2);
-                    var journeyTime = feature.properties.journeytime;
-
-                    layer.bindPopup("<b>Distance:</b><br>" + distance + " Km<br><br><b>Journey Time:</b><br>" + journeyTime);
-                }
-                else if (props.name) {
-                    layer.bindPopup(feature.properties.name);
-                }
-            }
-        }
-
-        function getRequestUrl(perPage, pageNumber) {
-            // var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/nodes?geom&osm::amenity=parking&per_page=" + perPage;
-            var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/ptstops?geom&osm::amenity=parking&per_page=" + perPage;
-            if (pageNumber) {
-                url += "&page=" + pageNumber;
-            }
-
-            return url;
-        }
-
-        function resolvePoint(point, callback) {
-            var request = $.ajax({
-                type: "POST",
-                url: "/api/Routing/GetClosestPointTo",
-                data: point,
-                dataType: "JSON"
-            });
-
-            request.success(function(response) {
-                if (callback) {
-                    callback(response);
-                }
-            });
-        }
-
-        function routePoint(points) {
-
-            var request = $.ajax({
-                type: "POST",
-                url: "/api/Routing/PointToPoint",
-                data: points,
-                dataType: "JSON"
-            });
-
-            request.success(function(response) {
-                if (response && response.results) {
-                    for (var i = response.results.length - 1; i >= 0; i--) {
-                        var thisItem = response.results[i];
-
-                        var geojsonFeature = {
-                            "type": "Feature",
-                            "properties": thisItem.properties,
-                            "geometry": thisItem.geom
-                        };
-
-                        var myStyle = {
-                            "color": "#ff7800",
-                            "weight": 5,
-                            "opacity": 1
-                        };
-
-                        L.geoJson(geojsonFeature, {
-                            style: myStyle,
-                            onEachFeature: onEachFeature
-                        }).addTo(map);
-                    }
-                }
-            });
-        }
-
-        // create a map in the "map" div, set the view to a given place and zoom
-        var map = L.map('map').setView([53.4791, -2.2457], 13);
-
-        // add an OpenStreetMap tile layer
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Built by Mark & Kev.'
-        }).addTo(map);
-
-        var routingPoints = [];
-
-        function onMapClick(e) {
-            var clickedPosition = e.latlng;
-
-            resolvePoint({ latitude: clickedPosition.lat, longitude: clickedPosition.lng }, function (point) {
-
-                var position = { lat: point.Latitude, lng: point.Longitude };
-                L.marker(position).addTo(map);
-
-                if (routingPoints.length == 0) {
-                    routingPoints.push(position);
-                } else {
-                    routingPoints.push(position);
-
-                    var from = routingPoints[0];
-                    var to = routingPoints[1];
-
-                    routePoint({
-                        fromLatitude: from.lat,
-                        fromLongitude: from.lng,
-                        toLatitude: to.lat,
-                        toLongitude: to.lng,
-                    });
-
-                    routingPoints = [];
-                }
+        $(function () {            
+            mapping.init({
+                container: "map",
+                latitude: 53.4791,
+                longitude: -2.2457,
+                zoom: 13
             });            
-        }
-
-        map.on('contextmenu', onMapClick);
+        });        
+                
     </script>
 }
 
