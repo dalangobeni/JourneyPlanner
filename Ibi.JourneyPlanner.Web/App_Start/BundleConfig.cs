@@ -30,7 +30,7 @@ namespace Ibi.JourneyPlanner.Web
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include(
+            bundles.Add(new StyleBundle("~/bundles/css").Include(
                 "~/Content/css/font-awesome.css",
                 "~/Content/css/reset.css", 
                 "~/Content/css/main.css",
