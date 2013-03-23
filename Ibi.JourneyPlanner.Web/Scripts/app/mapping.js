@@ -27,9 +27,9 @@
         }
     }
 
-    function getRequestUrl(perPage, pageNumber) {
+    function getRequestUrl(perPage, pageNumber, amenity) {
         // var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/nodes?geom&osm::amenity=parking&per_page=" + perPage;
-        var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/ptstops?geom&osm::amenity=parking&per_page=" + perPage;
+        var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/ptstops?geom&osm::amenity=" + amenity +"&per_page=" + perPage;
         if (pageNumber) {
             url += "&page=" + pageNumber;
         }
@@ -50,6 +50,35 @@
                 callback(modes);
             });
         }
+    }
+
+    function createLayerData(name, amenityName, icon) {
+        return {
+            name: name,
+            icon: icon,
+            amenity: amenityName
+        };
+    }
+
+    function getAvailableLayers() {
+        var layers = [];
+
+        layers.push(createLayerData('Car Parks','parking'));
+        layers.push(createLayerData('Bus Stops','ptstops'));
+
+        return layers;
+    }
+
+    function loadLayers() {
+        var layers = getAvailableLayers();
+        var overlayMaps = {};
+        for(var i = layers.length - 1; i >= 0; i--) {
+            var thisItem = layers[i];
+            var layer = L.featureGroup([]);
+            overlayMaps[thisItem.name] = layer;
+        }
+        
+        L.control.layers(null, overlayMaps).addTo(map);
     }
 
     function routePoint(points) {
@@ -143,7 +172,7 @@
         var div = options.container;
         var lat = options.latitude;
         var lng = options.longitude;
-        var zoom = options.zoom;        
+        var zoom = options.zoom; 
 
         map = L.map(div).setView([lat, lng], zoom);
         getTransportModeFunction = options.getTransportMode;
@@ -154,7 +183,10 @@
         }).addTo(map);
 
         map.on('contextmenu', onMapClick);
-        
+
+        // loading the required mapping layers for user to select
+        loadLayers();
+
         if (readyCallback) {
             readyCallback();
         }
