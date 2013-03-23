@@ -5,9 +5,19 @@
         var rndedNum = Math.round(number * multiple) / multiple;
         return rndedNum;
     }
+    
+    function journeyDetails(output) {
+        var content = [];
+        for (var item in output) {
+            content.push("<b>" + item + "</b><br>" + output[item]);
+        }
+
+        return content.join("<br><br>");
+    }
 
     var api = {
-        roundNumber: roundNumber
+        roundNumber: roundNumber,
+        journeyDetails: journeyDetails
     };
 
     window["formatting"] = api;

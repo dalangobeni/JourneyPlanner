@@ -1,6 +1,6 @@
 ﻿(function (window, $, L, formatting, undefined) {
 
-    var map;
+    var map, getTransportModeFunction;
 
     function onEachFeature(feature, layer) {
         if (feature.properties) {
@@ -8,10 +8,18 @@
             var props = feature.properties;
 
             if (props.distance && props.journeytime) {
-                var distance = formatting.roundNumber(feature.properties.distance / 1000, 2);
+                var distance = formatting.roundNumber(props.distance / 1000, 2);
                 var journeyTime = feature.properties.journeytime;
+                var speed = props.distance / journeyTime;
 
-                layer.bindPopup("<b>Distance:</b><br>" + distance + " Km<br><br><b>Journey Time:</b><br>" + journeyTime);
+                var output = {
+                    "Distance": distance + " Km",
+                    "Journey Time": journeyTime + " s",
+                    "Speed": speed + " m/s"
+                };
+
+                var formatted = formatting.journeyDetails(output);
+                layer.bindPopup(formatted);
             }
             else if (props.name) {
                 layer.bindPopup(feature.properties.name);
@@ -27,6 +35,21 @@
         }
 
         return url;
+    }
+    
+    function getTransportModes(callback) {
+
+        if (callback) {
+            var request = $.ajax({
+                type: "GET",
+                url: "/api/Routing/GetTransportModes",
+                dataType: "JSON"
+            });
+
+            request.success(function(modes) {
+                callback(modes);
+            });
+        }
     }
 
     function routePoint(points) {
@@ -65,10 +88,17 @@
     }
 
     function resolvePoint(point, callback) {
+        var selectedMode = getTransportModeFunction();
+        var model = {
+            latitude: point.latitude,
+            longitude: point.longitude,
+            transportMode: selectedMode
+        };
+
         var request = $.ajax({
             type: "POST",
             url: "/api/Routing/GetClosestPointTo",
-            data: point,
+            data: model,
             dataType: "JSON"
         });
 
@@ -109,13 +139,14 @@
         });
     }
 
-    function init(options) {
+    function init(options, readyCallback) {
         var div = options.container;
         var lat = options.latitude;
         var lng = options.longitude;
-        var zoom = options.zoom;
+        var zoom = options.zoom;        
 
         map = L.map(div).setView([lat, lng], zoom);
+        getTransportModeFunction = options.getTransportMode;
 
         // add an OpenStreetMap tile layer
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -123,10 +154,15 @@
         }).addTo(map);
 
         map.on('contextmenu', onMapClick);
+        
+        if (readyCallback) {
+            readyCallback();
+        }
     }
 
     var api = {
-        init: init
+        init: init,
+        getTransportModes: getTransportModes
     };
 
     window["mapping"] = api;

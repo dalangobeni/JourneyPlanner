@@ -29,10 +29,17 @@ namespace Ibi.JourneyPlanner.Web.Controllers
 
     public class RoutingController : ApiController
     {
-        public IEnumerable<string> GetTransportModes()
+        public Dictionary<string, string> GetTransportModes()
         {
-            var values = Enum.GetValues(typeof(VehicleEnum));
-            return values.Cast<VehicleEnum>().Select(value => value.ToString()).ToList();
+            var values = new Dictionary<string, string>
+                             {
+                                 // { "Cycling", VehicleEnum.Bicycle.ToString() },
+                                 { "Walking", VehicleEnum.Pedestrian.ToString() },
+                                 { "Driving", VehicleEnum.Car.ToString() },
+                                 // { "Bus", VehicleEnum.Bus.ToString() },
+                             };
+
+            return values;
         }
 
         [HttpPost]
@@ -99,7 +106,7 @@ namespace Ibi.JourneyPlanner.Web.Controllers
                     {
                         { "name", "Test route result." },
                         { "distance", route.TotalDistance },
-                        { "journeytime", TimeSpan.FromSeconds(route.TotalTime).ToString() },
+                        { "journeytime", route.TotalTime },
                     });
 
             return new ResultSet(feature);

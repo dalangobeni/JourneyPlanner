@@ -20,18 +20,47 @@
     @Scripts.Render("~/bundles/app")
     <script>
 
-        $(function () {            
-            mapping.init({
+        $(function () {
+
+            var getTransportMode = function () {
+                var form = $("#transportModes");
+                var selectedMode = $("input[name=mode]:checked", form).val();
+                return selectedMode;
+            };
+
+            var mapOptions = {
                 container: "map",
                 latitude: 53.4791,
                 longitude: -2.2457,
-                zoom: 13
-            });            
+                zoom: 13,
+                getTransportMode: getTransportMode
+            };
+
+            mapping.init(mapOptions, function() {
+                // Load transport modes
+                mapping.getTransportModes(function(modes) {
+                    if (modes) {
+
+                        var form = $("#transportModes");
+                        var list = form.append("<ul />");
+
+                        for (var mode in modes) {
+                            var displayText = mode;
+                            var value = modes[mode];
+
+                            list.append("<li><label><input type='radio' name='mode' value='" + value + "' name='transportmode' />" + displayText + "</label></li>");
+                        }
+                    }
+                });
+            });
         });        
                 
     </script>
 }
 
-    <h1>API Tests</h1>
+<h1>API Tests</h1>
 
-    <div id="map"></div>
+<form action="#" id="transportModes">
+</form>
+    
+<div id="map"></div>

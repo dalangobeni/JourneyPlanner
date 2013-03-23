@@ -69,7 +69,9 @@
 
             // create the router object: there all routing functions are available.
             IRouter<RouterPoint> router = new Router<SimpleWeighedEdge>(
-                osmData, interpreter, new DykstraRoutingLive(osmData.TagsIndex));
+                osmData, 
+                interpreter, 
+                new DykstraRoutingLive(osmData.TagsIndex));
 
             return router;
         }
