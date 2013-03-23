@@ -1,4 +1,4 @@
-﻿(function (window, $, L, formatting, undefined) {
+﻿(function (window, $, L, routing, geolocation, formatting, undefined) {
 
     var map, getTransportModeFunction;
 
@@ -79,92 +79,49 @@
         }
         
         L.control.layers(null, overlayMaps).addTo(map);
-    }
+    }    
+	
+    function drawRoutes(routes) {
+        for (var i = routes.length - 1; i >= 0; i--) {
+            var thisItem = routes[i];
 
-    function routePoint(points) {
+            var geojsonFeature = {
+                "type": "Feature",
+                "properties": thisItem.properties,
+                "geometry": thisItem.geom
+            };
 
-        var request = $.ajax({
-            type: "POST",
-            url: "/api/Routing/PointToPoint",
-            data: points,
-            dataType: "JSON"
-        });
+            var myStyle = {
+                "color": "#ff7800",
+                "weight": 5,
+                "opacity": 1
+            };
 
-        request.success(function (response) {
-            if (response && response.results) {
-                for (var i = response.results.length - 1; i >= 0; i--) {
-                    var thisItem = response.results[i];
-
-                    var geojsonFeature = {
-                        "type": "Feature",
-                        "properties": thisItem.properties,
-                        "geometry": thisItem.geom
-                    };
-
-                    var myStyle = {
-                        "color": "#ff7800",
-                        "weight": 5,
-                        "opacity": 1
-                    };
-
-                    L.geoJson(geojsonFeature, {
-                        style: myStyle,
-                        onEachFeature: onEachFeature
-                    }).addTo(map);
-                }
-            }
-        });
+            L.geoJson(geojsonFeature, {
+                style: myStyle,
+                onEachFeature: onEachFeature
+            }).addTo(map);
+        }
     }
 
     function resolvePoint(point, callback) {
         var selectedMode = getTransportModeFunction();
-        var model = {
-            latitude: point.latitude,
-            longitude: point.longitude,
-            transportMode: selectedMode
-        };
-
-        var request = $.ajax({
-            type: "POST",
-            url: "/api/Routing/GetClosestPointTo",
-            data: model,
-            dataType: "JSON"
-        });
-
-        request.success(function (response) {
-            if (callback) {
-                callback(response);
-            }
-        });
+        routing.resolvePoint(selectedMode, point, callback);
     }
-    
-    var routingPoints = [];
 
     function onMapClick(e) {
         var clickedPosition = e.latlng;
 
         resolvePoint({ latitude: clickedPosition.lat, longitude: clickedPosition.lng }, function (point) {
 
+            geolocation.reverseGeocode({ latitude: point.Latitude, longitude: point.Longitude }, function (pointName) {
+                alert(pointName);
+            });
+            
             var position = { lat: point.Latitude, lng: point.Longitude };
             L.marker(position).addTo(map);
 
-            if (routingPoints.length === 0) {
-                routingPoints.push(position);
-            } else {
-                routingPoints.push(position);
-
-                var from = routingPoints[0];
-                var to = routingPoints[1];
-
-                routePoint({
-                    fromLatitude: from.lat,
-                    fromLongitude: from.lng,
-                    toLatitude: to.lat,
-                    toLongitude: to.lng,
-                });
-
-                routingPoints = [];
-            }
+            routing.addPoint(position, drawRoutes);
         });
     }
 
@@ -199,4 +156,4 @@
 
     window["mapping"] = api;
 
-})(window, $, L, formatting);
+})(window, $, L, routing, geolocation, formatting);

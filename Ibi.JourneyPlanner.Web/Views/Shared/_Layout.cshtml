@@ -8,10 +8,13 @@
     @Scripts.Render("~/bundles/modernizr")
     @RenderSection("css", false)
 </head>
-<body>
-    @RenderBody()
+    <body>
+        <header>
+            <h1>TODO: Some Cool App Name</h1>
+        </header>
+        @RenderBody()
 
-    @Scripts.Render("~/bundles/jquery")
-    @RenderSection("scripts", required: false)
-</body>
+        @Scripts.Render("~/bundles/jquery")
+        @RenderSection("scripts", required: false)
+    </body>
 </html>

@@ -20,6 +20,8 @@ namespace Ibi.JourneyPlanner.Web
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                         "~/Scripts/app/formatting.js",
+                        "~/Scripts/app/geolocation.js",
+                        "~/Scripts/app/routing.js",
                         "~/Scripts/app/mapping.js"));
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're

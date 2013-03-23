@@ -7,12 +7,6 @@
      <!--[if lte IE 8]>
          <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
      <![endif]-->
-    
-    <style>
-        #map {
-            height: 560px;
-        }
-    </style>
 }
 
 @section scripts {
@@ -41,8 +35,9 @@
                 mapping.getTransportModes(function(modes) {
                     if (modes) {
 
-                        var form = $("#transportModes");
-                        var list = form.append("<ul />");
+                        var form = $("#transportModes");                        
+                        var list = $("<ul />");
+                        form.append(list);
 
                         for (var mode in modes) {
                             var displayText = mode;
@@ -59,9 +54,16 @@
     </script>
 }
 
-<h1>API Tests</h1>
-
-<form action="#" id="transportModes">
-</form>
+<aside>
+    <form action="#" id="transportModes">
+    </form>
     
-<div id="map"></div>
+    <div class="routeinfo">
+        <h2>Route Info</h2>
+        <ul id="routedetails"></ul>
+    </div>
+</aside>
+    
+<article>
+    <div id="map"></div>
+</article>
