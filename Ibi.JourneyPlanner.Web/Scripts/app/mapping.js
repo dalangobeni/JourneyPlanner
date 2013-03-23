@@ -1,4 +1,4 @@
-﻿(function (window, $, L, formatting, undefined) {
+﻿(function (window, $, L, routing, formatting, undefined) {
 
     var map, getTransportModeFunction;
 
@@ -52,64 +52,33 @@
         }
     }
 
-    function routePoint(points) {
+    function drawRoutes(routes) {
+        for (var i = routes.length - 1; i >= 0; i--) {
+            var thisItem = routes[i];
 
-        var request = $.ajax({
-            type: "POST",
-            url: "/api/Routing/PointToPoint",
-            data: points,
-            dataType: "JSON"
-        });
+            var geojsonFeature = {
+                "type": "Feature",
+                "properties": thisItem.properties,
+                "geometry": thisItem.geom
+            };
 
-        request.success(function (response) {
-            if (response && response.results) {
-                for (var i = response.results.length - 1; i >= 0; i--) {
-                    var thisItem = response.results[i];
+            var myStyle = {
+                "color": "#ff7800",
+                "weight": 5,
+                "opacity": 1
+            };
 
-                    var geojsonFeature = {
-                        "type": "Feature",
-                        "properties": thisItem.properties,
-                        "geometry": thisItem.geom
-                    };
-
-                    var myStyle = {
-                        "color": "#ff7800",
-                        "weight": 5,
-                        "opacity": 1
-                    };
-
-                    L.geoJson(geojsonFeature, {
-                        style: myStyle,
-                        onEachFeature: onEachFeature
-                    }).addTo(map);
-                }
-            }
-        });
+            L.geoJson(geojsonFeature, {
+                style: myStyle,
+                onEachFeature: onEachFeature
+            }).addTo(map);
+        }
     }
 
     function resolvePoint(point, callback) {
         var selectedMode = getTransportModeFunction();
-        var model = {
-            latitude: point.latitude,
-            longitude: point.longitude,
-            transportMode: selectedMode
-        };
-
-        var request = $.ajax({
-            type: "POST",
-            url: "/api/Routing/GetClosestPointTo",
-            data: model,
-            dataType: "JSON"
-        });
-
-        request.success(function (response) {
-            if (callback) {
-                callback(response);
-            }
-        });
+        routing.resolvePoint(selectedMode, point, callback);
     }
-    
-    var routingPoints = [];
 
     function onMapClick(e) {
         var clickedPosition = e.latlng;
@@ -119,23 +88,7 @@
             var position = { lat: point.Latitude, lng: point.Longitude };
             L.marker(position).addTo(map);
 
-            if (routingPoints.length === 0) {
-                routingPoints.push(position);
-            } else {
-                routingPoints.push(position);
-
-                var from = routingPoints[0];
-                var to = routingPoints[1];
-
-                routePoint({
-                    fromLatitude: from.lat,
-                    fromLongitude: from.lng,
-                    toLatitude: to.lat,
-                    toLongitude: to.lng,
-                });
-
-                routingPoints = [];
-            }
+            routing.addPoint(position, drawRoutes);
         });
     }
 
@@ -167,4 +120,4 @@
 
     window["mapping"] = api;
 
-})(window, $, L, formatting);
+})(window, $, L, routing, formatting);
