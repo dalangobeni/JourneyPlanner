@@ -95,7 +95,7 @@
         layers.push(createLayerData('Car Parks','parking', 'red'));
         layers.push(createLayerData('Bars', 'bar', 'blue','icon-beer'));
         layers.push(createLayerData('Fast Food', 'fast_food', 'green','icon-food'));
-        layers.push(createLayerData('Restaurants', 'restaurant', 'cadetblue'));
+        layers.push(createLayerData('Restaurants', 'restaurant', 'cadetblue', 'icon-glass'));
         layers.push(createLayerData('Bus Stations', 'bus_station', 'orange'));
 
         return layers;
