@@ -61,6 +61,33 @@ aside label {
         background: #fb5702;
     }
 
+.contextmenu {
+    background: #333;
+    border: solid 2px #fff;
+    color: #fff;
+    position: absolute;
+    width: 8em;
+    height: 5em;
+    z-index: 200;
+    top: 0;
+    left: 0;
+}
+
+    .contextmenu a {
+        color: #aaa;
+        display: block;
+        font-size: 0.9em;
+        font-weight: bold;
+        padding: 0.5em 13px;
+        text-decoration: none;
+    }
+
+        .contextmenu a:hover {
+            background: #222;
+            color: #fb5702;
+        }
+        
+
 @media only screen and (min-width:720px){
 
     aside {

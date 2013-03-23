@@ -1,6 +1,6 @@
 ﻿(function (window, $, L, routing, geolocation, formatting, undefined) {
 
-    var map, getTransportModeFunction;
+    var map, getTransportModeFunction, contextMenu;
 
     function onEachFeature(feature, layer) {
         if (feature.properties) {
@@ -23,6 +23,47 @@
             }
             else if (props.name) {
                 layer.bindPopup(feature.properties.name);
+            }
+        }
+    }
+    
+    function spawnContextMenu(layer) {
+        if (!contextMenu) {
+            contextMenu = $("<div class='contextmenu' />");
+
+            var links = [];
+
+            var routeLink = $("<a href='#'>Start Here</a>");
+            routeLink.click(function(e) {
+                e.preventDefault();
+                alert("click");
+            });
+            links.push(routeLink);
+
+            // Create menu HTML
+            var list = $("<ul>");
+            for (var i = 0; i < links.length; i++) {
+                var li = $("<li>");
+                li.append(links[i]);
+                list.append(li);
+            }
+            
+            contextMenu.append(list);
+            $("body article").append(contextMenu);
+        }
+
+        // Get location of clicked marker
+        var locationOfMarker = e.latLng;
+    }
+
+    function forEachLayerIcon(feature, layer) {
+        if (feature.properties) {
+            var props = feature.properties;
+            if (props.name) {
+                layer.on('click', function (e) {
+                    var markerLocation = e.containerPoint;
+                    spawnContextMenu(e, props);
+                });
             }
         }
     }
@@ -112,7 +153,7 @@
                                 return L.marker(latlng, { icon: geojsonMarkerOptions });
                             },
                             style: myStyle,
-                            onEachFeature: onEachFeature
+                            onEachFeature: forEachLayerIcon
                         }).addTo(layer);
                     }
                 }
