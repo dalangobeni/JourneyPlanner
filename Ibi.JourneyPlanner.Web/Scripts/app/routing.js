@@ -1,8 +1,8 @@
 ﻿(function (window, $, undefined) {
 
-    var currentRoute = {};
-
-    var isRouteInProgress = false;
+    var currentRoute = {},
+        isRouteInProgress = false,
+        routeCompleteHandler;
     
     function buildRoute(buildRouteHandler, callback) {
 
@@ -75,15 +75,20 @@
         }
     }
     
-    function addPoint(point, routeCompleteHandler) {
+    function addPoint(point) {
         if (!isRouteInProgress) {
             startRoute(point);
         } else {
             endRoute(point, routeCompleteHandler);
         }
     }
+    
+    function init(options) {
+        routeCompleteHandler = options.routeCompleteHandler;
+    }
 
     var api = {
+        init: init,
         addPoint: addPoint,
         resolvePoint: resolvePoint
     };

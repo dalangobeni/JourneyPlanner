@@ -25,10 +25,6 @@
     }
 
     function reverseGeocode(point, callback) {
-        if (callback) {
-            callback("Resolved name for point " + point.latitude + "," + point.longitude);
-        }
-
         var geocoder = new google.maps.Geocoder();
 
         // console.log("Reverse geocoding available");

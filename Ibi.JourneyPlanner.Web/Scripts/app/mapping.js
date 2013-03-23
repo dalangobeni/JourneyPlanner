@@ -1,6 +1,8 @@
 ﻿(function (window, $, L, routing, geolocation, formatting, undefined) {
 
-    var map, getTransportModeFunction, contextMenu;
+    var map,
+        getTransportModeFunction,
+        routes = [];
 
     function onEachFeature(feature, layer) {
         if (feature.properties) {
@@ -27,50 +29,24 @@
         }
     }
     
-    //function spawnContextMenu(layer) {
-    //    if (!contextMenu) {
-    //        contextMenu = $("<div class='contextmenu' />");
-
-    //        var links = [];
-
-    //        var routeLink = $("<a href='#'>Start Here</a>");
-    //        routeLink.click(function(e) {
-    //            e.preventDefault();
-    //            alert("click");
-    //        });
-    //        links.push(routeLink);
-
-    //        // Create menu HTML
-    //        var list = $("<ul>");
-    //        for (var i = 0; i < links.length; i++) {
-    //            var li = $("<li>");
-    //            li.append(links[i]);
-    //            list.append(li);
-    //        }
-            
-    //        contextMenu.append(list);
-    //        $("body article").append(contextMenu);
-    //    }
-
-    //    // Get location of clicked marker
-    //    var locationOfMarker = e.latLng;
-    //}
-    
     function handleContextClick(eventTarget) {
         var link = $(eventTarget);
         alert(link.data("action"));
         return false;
     }
     
-    function addRoutingPoint(position) {
-        routing.addPoint(position, drawRoutes);
+    function addRoutingPoint(position, name) {
+        routing.addPoint(position);
         
         var options = L.AwesomeMarkers.icon({
-            color: "green",
+            color: "orange",
             icon: "icon-flag"
         });
 
-        var marker = L.marker(position, { icon: options }).addTo(map);
+        var marker = L.marker(position, {
+            icon: options
+        }).bindPopup("<h1>" + name + "</h1>")
+            .addTo(map);
     }
 
     function forEachLayerIcon(feature, layer, color) {
@@ -78,17 +54,6 @@
             var props = feature.properties;
             if (props.name) {
                 var content = "<h1 style='color: " + color + "'>" + props.name + "</h1>";
-
-                //var links = [];
-                //links.push({ text: "Start Route", action: "startRoute" });
-                //links.push({ text: "Clear Route", action: "clearRoute" });
-
-                //content += "<ul class='contextmenu'>";
-                //for (var i = 0; i < links.length; i++) {
-                //    var link = links[i];
-                //    content += "<li><a onclick='return mapping.handleContextClick(this)' data-action='" + link.action + "' class='context' href='#'>" + link.text + "</a></li>";
-                //}
-                //content += "</ul>";
 
                 layer.bindPopup(content);
 
@@ -207,6 +172,7 @@
         var overlayMaps = {};
 
         var layerCount = layers.length;
+
         for (var i = 0; i < layerCount; i++) {
             var thisItem = layers[i];
             var layer = L.featureGroup([]);
@@ -217,7 +183,6 @@
                 icon: thisItem.icon,                
                 isLoaded: false
             };
-
 
             overlayMaps[thisItem.name] = layer;
         }
@@ -234,19 +199,21 @@
                 var trimmed = $.trim(text);
 
                 var matchingLayer = overlayMaps[trimmed];
-                if (!matchingLayer.extraOptions.isLoaded) {
-                    var amenity = matchingLayer.extraOptions.amenityName;
-                    var icon = matchingLayer.extraOptions.icon;
-                    var color = matchingLayer.extraOptions.color;
-                    loadLayerData(matchingLayer, amenity, color, icon);
+                if (matchingLayer.extraOptions) {
+                    if (!matchingLayer.extraOptions.isLoaded) {
+                        var amenity = matchingLayer.extraOptions.amenityName;
+                        var icon = matchingLayer.extraOptions.icon;
+                        var color = matchingLayer.extraOptions.color;
+                        loadLayerData(matchingLayer, amenity, color, icon);
+                    }
                 }
             }
         });
     }    
 	
-    function drawRoutes(routes) {
-        for (var i = routes.length - 1; i >= 0; i--) {
-            var thisItem = routes[i];
+    function drawRoutes(routesToDraw) {
+        for (var i = routesToDraw.length - 1; i >= 0; i--) {
+            var thisItem = routesToDraw[i];
 
             var geojsonFeature = {
                 "type": "Feature",
@@ -260,7 +227,7 @@
                 "opacity": 1
             };
 
-            L.geoJson(geojsonFeature, {
+            var path = L.geoJson(geojsonFeature, {
                 style: myStyle,
                 onEachFeature: onEachFeature
             }).addTo(map);
@@ -278,11 +245,10 @@
         resolvePoint({ latitude: clickedPosition.lat, longitude: clickedPosition.lng }, function (point) {
 
             geolocation.reverseGeocode({ latitude: point.Latitude, longitude: point.Longitude }, function (pointName) {
-                // TODO: Something with the nameal
-            });
+                var position = { lat: point.Latitude, lng: point.Longitude };
+                addRoutingPoint(position, pointName);
+            });  
             
-            var position = { lat: point.Latitude, lng: point.Longitude };
-            addRoutingPoint(position);
         });
     }
 
@@ -304,6 +270,11 @@
 
         // loading the required mapping layers for user to select
         loadLayers();
+        
+        // Set up routing
+        routing.init({
+            routeCompleteHandler: drawRoutes
+        });
 
         if (readyCallback) {
             readyCallback();
