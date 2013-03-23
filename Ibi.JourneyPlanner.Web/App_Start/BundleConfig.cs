@@ -31,9 +31,11 @@ namespace Ibi.JourneyPlanner.Web
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
+                "~/Content/css/font-awesome.css",
                 "~/Content/css/reset.css", 
                 "~/Content/css/main.css",
-                "~/Content/css/leaflet.awesome-markers.css"));
+                "~/Content/css/leaflet.awesome-markers.css"
+                ));
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",

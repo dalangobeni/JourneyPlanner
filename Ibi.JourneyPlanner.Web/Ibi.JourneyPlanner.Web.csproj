@@ -187,6 +187,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Content\css\font-awesome.css" />
+    <Content Include="Content\css\font-awesome.min.css" />
+    <Content Include="Content\css\font\fontawesome-webfont.svg" />
     <Content Include="Content\css\leaflet.awesome-markers.css" />
     <Content Include="Content\css\main.css" />
     <Content Include="Content\css\reset.css" />
@@ -264,6 +267,10 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="App_Data\Manchester.osm.pbf" />
+    <Content Include="Content\css\font\fontawesome-webfont.eot" />
+    <Content Include="Content\css\font\fontawesome-webfont.ttf" />
+    <Content Include="Content\css\font\fontawesome-webfont.woff" />
+    <Content Include="Content\css\font\FontAwesome.otf" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\app\formatting.js" />
     <Content Include="Scripts\app\geolocation.js" />

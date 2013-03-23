@@ -83,22 +83,23 @@
         }
     }
 
-    function createLayerData(name, amenityName, icon) {
+    function createLayerData(name, amenityName, color, icon) {
         return {
-            name: name,
-            icon: icon,
-            amenity: amenityName
+            name: name,            
+            amenity: amenityName,
+            color: color,
+            icon: icon
         };
     }
 
     function getAvailableLayers() {
         var layers = [];
 
-        layers.push(createLayerData('Car Parks','parking'));
-        layers.push(createLayerData('Bars', 'bar', 'icon-beer'));
-        layers.push(createLayerData('Fast Food', 'fast_food', 'icon-food'));
-        layers.push(createLayerData('Restaurants', 'restaurant'));
-        layers.push(createLayerData('Bus Stations', 'bus_station'));
+        layers.push(createLayerData('Car Parks','parking', 'red'));
+        layers.push(createLayerData('Bars', 'bar', 'blue','icon-beer'));
+        layers.push(createLayerData('Fast Food', 'fast_food', 'green','icon-food'));
+        layers.push(createLayerData('Restaurants', 'restaurant', 'cadetblue'));
+        layers.push(createLayerData('Bus Stations', 'bus_station', 'orange'));
 
         return layers;
     }
@@ -112,7 +113,7 @@
         return url;
     }
     
-    function loadLayerData(layer, amenity, icon) {
+    function loadLayerData(layer, amenity, color, icon) {
         var url = getRequestUrl(amenity, 500);
         
         var request = $.ajax({
@@ -139,13 +140,12 @@
                         var myStyle = {
                             "color": "#ff7800",
                             "weight": 5,
-                            "opacity": 1,
-                            "icon": icon
+                            "opacity": 1
                         };
 
                         var geojsonMarkerOptions = L.AwesomeMarkers.icon({
-                            icon: icon,
-                            color: 'red'
+                            color: color,
+                            icon: icon
                         });
 
                         L.geoJson(geojsonFeature, {
@@ -179,7 +179,8 @@
 
             layer.extraOptions = {
                 amenityName: thisItem.amenity,
-                icon: thisItem.icon,
+                color: thisItem.color,
+                icon: thisItem.icon,                
                 isLoaded: false
             };
 
@@ -202,7 +203,8 @@
                 if (!matchingLayer.extraOptions.isLoaded) {
                     var amenity = matchingLayer.extraOptions.amenityName;
                     var icon = matchingLayer.extraOptions.icon;
-                    loadLayerData(matchingLayer, amenity, icon);
+                    var color = matchingLayer.extraOptions.color;
+                    loadLayerData(matchingLayer, amenity, color, icon);
                 }
             }
         });
