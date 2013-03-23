@@ -29,6 +29,11 @@
             }
         }
 
+        public static void Initialise()
+        {
+            var instance = Instance;
+        }
+
         private static IRouter<RouterPoint> GetEngine()
         {
             // keeps a memory-efficient version of the osm-tags.

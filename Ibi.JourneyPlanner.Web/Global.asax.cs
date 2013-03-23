@@ -9,6 +9,8 @@ using System.Web.Routing;
 
 namespace Ibi.JourneyPlanner.Web
 {
+    using Ibi.JourneyPlanner.Web.Code;
+
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
 
@@ -22,6 +24,10 @@ namespace Ibi.JourneyPlanner.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            #if (RELEASE)
+            Engine.Initialise();
+            #endif
         }
     }
 }
