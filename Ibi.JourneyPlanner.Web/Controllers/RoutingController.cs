@@ -23,6 +23,7 @@ namespace Ibi.JourneyPlanner.Web.Controllers
     using Ibi.JourneyPlanner.Web.Code;
     using Ibi.JourneyPlanner.Web.Extensions;
     using Ibi.JourneyPlanner.Web.Models;
+    using Ibi.JourneyPlanner.Web.Models.Exceptions;
 
     using OsmSharp.Routing.Core;
     using OsmSharp.Tools.Math.Geo;
@@ -48,7 +49,7 @@ namespace Ibi.JourneyPlanner.Web.Controllers
             var router = Engine.Instance;
             var transportMode = this.ResolveVehicleEnum(resolvePointModel.TransportMode);
 
-            if (!router.SupportsVehicle(transportMode))
+            if (!router.SupportsTransportMode(transportMode))
             {
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError)
                 {
@@ -57,7 +58,7 @@ namespace Ibi.JourneyPlanner.Web.Controllers
                 });
             }
 
-            var point = router.Resolve(transportMode, new GeoCoordinate(resolvePointModel.Latitude, resolvePointModel.Longitude));
+            var point = router.GetNearestPointTo(transportMode, resolvePointModel.Latitude, resolvePointModel.Longitude);
             if (point == null)
             {
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError)
@@ -67,7 +68,7 @@ namespace Ibi.JourneyPlanner.Web.Controllers
                 });
             }
 
-            return new LocationModel(point.Location.Latitude, point.Location.Longitude);
+            return point;
         }
 
         [HttpPost]
@@ -78,7 +79,7 @@ namespace Ibi.JourneyPlanner.Web.Controllers
             // Get transport mode
             var transportMode = this.ResolveVehicleEnum(pointToPointModel.TransportMode);
 
-            if (!router.SupportsVehicle(transportMode))
+            if (!router.SupportsTransportMode(transportMode))
             {
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError)
                 {
@@ -88,28 +89,21 @@ namespace Ibi.JourneyPlanner.Web.Controllers
             }
 
             // resolve both points; find the closest routable point.
-            var startPoint = router.Resolve(transportMode, pointToPointModel.ToStartGeoCoordinate());
-            var endPoint = router.Resolve(transportMode, pointToPointModel.ToEndCoordinate());
+            try
+            {
+                var route = router.CalculatePointToPoint(
+                    transportMode, pointToPointModel.ToStartGeoCoordinate(), pointToPointModel.ToEndCoordinate());
 
-            // calculate route.
-            var route = router.Calculate(transportMode, startPoint, endPoint);
-
-            var coordinates = route.Entries
-                .Select(x => new GeographicPosition(x.Latitude, x.Longitude))
-                .ToList();
-
-            var lineString = new LineString(coordinates);
-
-            var feature = new Feature(
-                lineString,
-                new Dictionary<string, object>
-                    {
-                        { "name", "Test route result." },
-                        { "distance", route.TotalDistance },
-                        { "journeytime", route.TotalTime },
-                    });
-
-            return new ResultSet(feature);
+                return route.Results;
+            }
+            catch (RoutingException e)
+            {
+                throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError)
+                {
+                    Content = new StringContent("Routing error"),
+                    ReasonPhrase = e.Message
+                });
+            }
         }
 
         private VehicleEnum ResolveVehicleEnum(string transportMode, VehicleEnum defaultType = VehicleEnum.Car)
