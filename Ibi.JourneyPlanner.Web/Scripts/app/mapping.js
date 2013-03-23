@@ -187,7 +187,7 @@
         resolvePoint({ latitude: clickedPosition.lat, longitude: clickedPosition.lng }, function (point) {
 
             geolocation.reverseGeocode({ latitude: point.Latitude, longitude: point.Longitude }, function (pointName) {
-                alert(pointName);
+                // TODO: Something with the nameal
             });
             
             var position = { lat: point.Latitude, lng: point.Longitude };

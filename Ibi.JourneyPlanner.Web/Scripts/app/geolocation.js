@@ -1,54 +1,5 @@
-﻿(function (window, $, undefined) {
-    
-    function geocode(location, callback) {
-        if (callback) {
-            callback("Lat/lng for location " + location);
-        }
+﻿(function (window, google, undefined) {
 
-        var geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ 'address': location, 'region': 'GB' }, function (results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                //console.log(results);
-                getFirstGeocodedAddress(results, callback)
-                if (callback) {
-                    callback(results);
-                }
-            }
-            else {
-                if (callback) {
-                    callback(status);
-                }
-            }
-        });
-    }
-
-    function reverseGeocode(point, callback) {
-        if (callback) {
-            callback("Resolved name for point " + point.latitude + "," + point.longitude);
-        }
-
-        var geocoder = new google.maps.Geocoder();
-
-        if (geocoder) {
-            //console.log("Reverse geocoding available");
-            var latLng = new google.maps.LatLng(point.latitude, point.longitude);
-            geocoder.geocode({ 'latLng': latLng }, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    //console.log("Reverse geocoding success");
-                    getFirstGeocodedAddress(results, callback);
-                    //callback(results);
-                }
-                else {
-                    //console.log("Reverse geocoding failure");
-                    callback(status);
-                }
-            });
-        }
-        else {
-            //console.log("Reverse geocoding unavailable");
-            callback("Reverse geocoding unavailable");
-        }
-    }
 
     // Gets the first formatted address from a list of geocoded results.
     function getFirstGeocodedAddress(results, callback) {
@@ -64,6 +15,34 @@
         }
     }
     
+    function geocode(location, callback) {
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ 'address': location, 'region': 'GB' }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                getFirstGeocodedAddress(results, callback);                
+            }
+        });
+    }
+
+    function reverseGeocode(point, callback) {
+        if (callback) {
+            callback("Resolved name for point " + point.latitude + "," + point.longitude);
+        }
+
+        var geocoder = new google.maps.Geocoder();
+
+        // console.log("Reverse geocoding available");
+        var latLng = new google.maps.LatLng(point.latitude, point.longitude);
+        geocoder.geocode({ 'latLng': latLng }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                getFirstGeocodedAddress(results, callback);
+            } else {
+                //console.log("Reverse geocoding failure");
+                callback(status);
+            }
+        });
+    }
+    
     function getUserLocation(callback) {
         if (callback) {
             callback("User's location");
@@ -76,7 +55,6 @@
                 // on the map. Let's store a reference to it here so
                 // that it can be updated in several places.
                 var locationMarker = null;
-
 
                 // Get the location of the user's browser using the
                 // native geolocation service. When we invoke this method
@@ -92,16 +70,6 @@
                         if (locationMarker) {
                             return;
                         }
-
-                        // Log that this is the initial position.
-                        console.log("Initial Position Found");
-
-                        // Add a marker to the map using the position.
-                        //locationMarker = L.marker([
-                        //    position.coords.latitude,
-                        //    position.coords.longitude]).addTo(map);
-
-                        //console.log(position.coords.latitude, position.coords.longitude);
 
                     },
                     function (error) {
@@ -125,4 +93,4 @@
 
     window.geolocation = api;
 
-})(window, $);
+})(window, google);
