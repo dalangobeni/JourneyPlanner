@@ -56,7 +56,10 @@
                             lng: location.coords.longitude
                         };
 
-                        mapping.addPoint(point, "Your Location");
+                        mapping.addPoint(point, "Your Are Here", {
+                            color: "orange",
+                            icon: "icon-user"
+                        });
                     });
                 });
             });

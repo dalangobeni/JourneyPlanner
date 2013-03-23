@@ -35,16 +35,19 @@
         return false;
     }
     
-    function addRoutingPoint(position, name) {
+    function addRoutingPoint(position, name, options) {
         routing.addPoint(position);
-        
-        var options = L.AwesomeMarkers.icon({
-            color: "orange",
-            icon: "icon-flag"
+
+        var color = options.color || "orange";
+        var icon = options.icon || "icon-flag";
+
+        var iconOptions = L.AwesomeMarkers.icon({
+            color: color,
+            icon: icon
         });
 
         var marker = L.marker(position, {
-            icon: options
+            icon: iconOptions
         }).bindPopup("<h1>" + name + "</h1>")
             .addTo(map);
     }
