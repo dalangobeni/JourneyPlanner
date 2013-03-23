@@ -27,42 +27,63 @@
         }
     }
     
-    function spawnContextMenu(layer) {
-        if (!contextMenu) {
-            contextMenu = $("<div class='contextmenu' />");
+    //function spawnContextMenu(layer) {
+    //    if (!contextMenu) {
+    //        contextMenu = $("<div class='contextmenu' />");
 
-            var links = [];
+    //        var links = [];
 
-            var routeLink = $("<a href='#'>Start Here</a>");
-            routeLink.click(function(e) {
-                e.preventDefault();
-                alert("click");
-            });
-            links.push(routeLink);
+    //        var routeLink = $("<a href='#'>Start Here</a>");
+    //        routeLink.click(function(e) {
+    //            e.preventDefault();
+    //            alert("click");
+    //        });
+    //        links.push(routeLink);
 
-            // Create menu HTML
-            var list = $("<ul>");
-            for (var i = 0; i < links.length; i++) {
-                var li = $("<li>");
-                li.append(links[i]);
-                list.append(li);
-            }
+    //        // Create menu HTML
+    //        var list = $("<ul>");
+    //        for (var i = 0; i < links.length; i++) {
+    //            var li = $("<li>");
+    //            li.append(links[i]);
+    //            list.append(li);
+    //        }
             
-            contextMenu.append(list);
-            $("body article").append(contextMenu);
-        }
+    //        contextMenu.append(list);
+    //        $("body article").append(contextMenu);
+    //    }
 
-        // Get location of clicked marker
-        var locationOfMarker = e.latLng;
+    //    // Get location of clicked marker
+    //    var locationOfMarker = e.latLng;
+    //}
+    
+    function handleContextClick(eventTarget) {
+        var link = $(eventTarget);
+        alert(link.data("action"));
+        return false;
     }
 
     function forEachLayerIcon(feature, layer) {
         if (feature.properties) {
             var props = feature.properties;
             if (props.name) {
-                layer.on('click', function (e) {
-                    var markerLocation = e.containerPoint;
-                    spawnContextMenu(e, props);
+                var content = "<h1>" + props.name + "</h1>";
+
+                //var links = [];
+                //links.push({ text: "Start Route", action: "startRoute" });
+                //links.push({ text: "Clear Route", action: "clearRoute" });
+
+                //content += "<ul class='contextmenu'>";
+                //for (var i = 0; i < links.length; i++) {
+                //    var link = links[i];
+                //    content += "<li><a onclick='return mapping.handleContextClick(this)' data-action='" + link.action + "' class='context' href='#'>" + link.text + "</a></li>";
+                //}
+                //content += "</ul>";
+
+                layer.bindPopup(content);
+
+                layer.on('contextmenu', function () {
+                    var position = layer.getLatLng();
+                    routing.addPoint(position, drawRoutes);
                 });
             }
         }
@@ -280,7 +301,8 @@
 
     var api = {
         init: init,
-        getTransportModes: getTransportModes
+        getTransportModes: getTransportModes,
+        handleContextClick: handleContextClick
     };
 
     window["mapping"] = api;
