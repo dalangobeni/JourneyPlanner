@@ -49,19 +49,19 @@
             .addTo(map);
     }
 
-    function forEachLayerIcon(feature, layer, color) {
+    function forEachLayerIcon(feature, layer, displayText, color) {
         if (feature.properties) {
             var props = feature.properties;
-            if (props.name) {
-                var content = "<h1 style='color: " + color + "'>" + props.name + "</h1>";
+            var displayName = props.name || displayText;
 
-                layer.bindPopup(content);
+            var content = "<h1 style='color: " + color + "'>" + displayName + "</h1>";
 
-                layer.on('contextmenu', function () {
-                    var position = layer.getLatLng();
-                    addRoutingPoint(position);
-                });
-            }
+            layer.bindPopup(content);
+
+            layer.on('contextmenu', function() {
+                var position = layer.getLatLng();
+                addRoutingPoint(position);
+            });
         }
     }
     
@@ -110,7 +110,7 @@
         return url;
     }
     
-    function loadLayerData(layer, amenity, color, icon) {
+    function loadLayerData(displayText, layer, amenity, color, icon) {
         var url = getRequestUrl(amenity, 500);
         
         var request = $.ajax({
@@ -123,38 +123,36 @@
             if (response && response.results) {
                 for (var i = response.results.length - 1; i >= 0; i--) {
                     var thisItem = response.results[i];
+                    
+                    var geojsonFeature = {
+                        "type": "Feature",
+                        "properties": {
+                            "name": thisItem.name
+                        },
+                        "geometry": thisItem.geom
+                    };
 
-                    if (thisItem.name) {
+                    var myStyle = {
+                        "color": "#ff7800",
+                        "weight": 5,
+                        "opacity": 1
+                    };
 
-                        var geojsonFeature = {
-                            "type": "Feature",
-                            "properties": {
-                                "name": thisItem.name
-                            },
-                            "geometry": thisItem.geom
-                        };
+                    var geojsonMarkerOptions = L.AwesomeMarkers.icon({
+                        color: color,
+                        icon: icon
+                    });
 
-                        var myStyle = {
-                            "color": "#ff7800",
-                            "weight": 5,
-                            "opacity": 1
-                        };
+                    L.geoJson(geojsonFeature, {
+                        pointToLayer: function(feature, latlng) {
+                            return L.marker(latlng, { icon: geojsonMarkerOptions });
+                        },
+                        style: myStyle,
+                        onEachFeature: function(featureItem, layerItem) {
+                            forEachLayerIcon(featureItem, layerItem, displayText, color);
+                        }
+                    }).addTo(layer);
 
-                        var geojsonMarkerOptions = L.AwesomeMarkers.icon({
-                            color: color,
-                            icon: icon
-                        });
-
-                        L.geoJson(geojsonFeature, {
-                            pointToLayer: function (feature, latlng) {
-                                return L.marker(latlng, { icon: geojsonMarkerOptions });
-                            },
-                            style: myStyle,
-                            onEachFeature: function (featureItem, layerItem) {
-                                forEachLayerIcon(featureItem, layerItem, color);
-                            }
-                        }).addTo(layer);
-                    }
                 }
 
                 //var nextPage = response.next_page;
@@ -204,7 +202,7 @@
                         var amenity = matchingLayer.extraOptions.amenityName;
                         var icon = matchingLayer.extraOptions.icon;
                         var color = matchingLayer.extraOptions.color;
-                        loadLayerData(matchingLayer, amenity, color, icon);
+                        loadLayerData(text, matchingLayer, amenity, color, icon);
                     }
                 }
             }
