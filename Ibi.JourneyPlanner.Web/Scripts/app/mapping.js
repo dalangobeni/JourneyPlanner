@@ -26,16 +26,6 @@
             }
         }
     }
-
-    function getRequestUrl(perPage, pageNumber, amenity) {
-        // var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/nodes?geom&osm::amenity=parking&per_page=" + perPage;
-        var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/ptstops?geom&osm::amenity=" + amenity +"&per_page=" + perPage;
-        if (pageNumber) {
-            url += "&page=" + pageNumber;
-        }
-
-        return url;
-    }
     
     function getTransportModes(callback) {
 
@@ -64,21 +54,103 @@
         var layers = [];
 
         layers.push(createLayerData('Car Parks','parking'));
-        layers.push(createLayerData('Bus Stops','ptstops'));
+        layers.push(createLayerData('Bars', 'bar'));
+        layers.push(createLayerData('Fast Food', 'fast_food'));
+        layers.push(createLayerData('Restaurants', 'restaurant'));
+        layers.push(createLayerData('Bus Stations', 'bus_station'));
 
         return layers;
+    }
+
+    function getRequestUrl(amenity, perPage, pageNumber) {
+        var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/nodes?geom&osm::amenity=" + amenity + "&per_page=" + perPage;
+        if (pageNumber) {
+            url += "&page=" + pageNumber;
+        }
+
+        return url;
+    }
+    
+    function loadLayerData(layer, amenity) {
+        var url = getRequestUrl(amenity, 500);
+        
+        var request = $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "JSON"
+        });
+
+        request.success(function (response) {
+            if (response && response.results) {
+                for (var i = response.results.length - 1; i >= 0; i--) {
+                    var thisItem = response.results[i];
+
+                    if (thisItem.name) {
+
+                        var geojsonFeature = {
+                            "type": "Feature",
+                            "properties": {
+                                "name": thisItem.name
+                            },
+                            "geometry": thisItem.geom
+                        };
+
+                        var myStyle = {
+                            "color": "#ff7800",
+                            "weight": 5,
+                            "opacity": 1
+                        };
+
+                        L.geoJson(geojsonFeature, {
+                            style: myStyle,
+                            onEachFeature: onEachFeature
+                        }).addTo(layer);
+                    }
+                }
+
+                //var nextPage = response.next_page;
+                //if (nextPage && nextPage > 0) {
+                //    loadPageBlock(numberOfSitesPerPage, nextPage);
+                //}
+
+                layer.isLoaded = true;
+            }
+        });
     }
 
     function loadLayers() {
         var layers = getAvailableLayers();
         var overlayMaps = {};
-        for(var i = layers.length - 1; i >= 0; i--) {
+
+        var layerCount = layers.length;
+        for (var i = 0; i < layerCount; i++) {
             var thisItem = layers[i];
             var layer = L.featureGroup([]);
+
+            layer.amenityName = thisItem.amenity;
+            layer.isLoaded = false;
+
             overlayMaps[thisItem.name] = layer;
         }
         
         L.control.layers(null, overlayMaps).addTo(map);
+        
+        // Hook up events
+        // This is horrible.
+        $(".leaflet-control-layers-overlays input").change(function (e) {
+            var target = $(e.target);
+            if (target.is(":checked"))
+            {
+                var text = target.siblings("span").text();
+                var trimmed = $.trim(text);
+
+                var matchingLayer = overlayMaps[trimmed];
+                if (!matchingLayer.isLoaded) {
+                    var amenity = matchingLayer.amenityName;
+                    loadLayerData(matchingLayer, amenity);
+                }
+            }
+        });
     }    
 	
     function drawRoutes(routes) {
