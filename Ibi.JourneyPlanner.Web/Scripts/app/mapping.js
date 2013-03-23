@@ -1,4 +1,4 @@
-﻿(function (window, $, L, routing, formatting, undefined) {
+﻿(function (window, $, L, routing, geolocation, formatting, undefined) {
 
     var map, getTransportModeFunction;
 
@@ -85,6 +85,10 @@
 
         resolvePoint({ latitude: clickedPosition.lat, longitude: clickedPosition.lng }, function (point) {
 
+            geolocation.reverseGeocode({ latitude: point.Latitude, longitude: point.Longitude }, function (pointName) {
+                alert(pointName);
+            });
+            
             var position = { lat: point.Latitude, lng: point.Longitude };
             L.marker(position).addTo(map);
 
@@ -120,4 +124,4 @@
 
     window["mapping"] = api;
 
-})(window, $, L, routing, formatting);
+})(window, $, L, routing, geolocation, formatting);
