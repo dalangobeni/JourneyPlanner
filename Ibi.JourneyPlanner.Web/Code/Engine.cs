@@ -18,6 +18,7 @@ namespace Ibi.JourneyPlanner.Web.Code
     using GeoJSON.Net.Feature;
     using GeoJSON.Net.Geometry;
 
+    using Ibi.JourneyPlanner.Web.Code.Language;
     using Ibi.JourneyPlanner.Web.Extensions;
     using Ibi.JourneyPlanner.Web.Models;
     using Ibi.JourneyPlanner.Web.Models.Exceptions;
@@ -151,7 +152,7 @@ namespace Ibi.JourneyPlanner.Web.Code
                     });
 
             var generator = new InstructionGenerator();
-            var instructions = generator.Generate(route, interpreter);
+            var instructions = generator.Generate(route, interpreter, new SimpleEnglishLanguageGenerator());
 
             return new RouteModel
                        {
