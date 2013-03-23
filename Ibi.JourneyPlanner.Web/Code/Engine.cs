@@ -153,7 +153,10 @@ namespace Ibi.JourneyPlanner.Web.Code
             var generator = new InstructionGenerator();
             var instructions = generator.Generate(route, interpreter);
 
-            return new RouteModel { Results = new ResultSet(feature) };
+            return new RouteModel
+                       {
+                           Results = new ResultSet(feature)
+                       };
         }
     }
 }
