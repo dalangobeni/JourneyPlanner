@@ -282,7 +282,8 @@
     var api = {
         init: init,
         getTransportModes: getTransportModes,
-        handleContextClick: handleContextClick
+        handleContextClick: handleContextClick,
+        addPoint: addRoutingPoint
     };
 
     window["mapping"] = api;

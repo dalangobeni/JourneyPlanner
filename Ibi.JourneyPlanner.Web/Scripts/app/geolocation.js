@@ -40,17 +40,10 @@
     }
     
     function getUserLocation(callback) {
-        if (callback) {
-            callback("User's location");
-        }
+        
             // HTML5 geolocation
             // Check to see if this browser supports geolocation.
             if (navigator.geolocation) {
-
-                // This is the location marker that we will be using
-                // on the map. Let's store a reference to it here so
-                // that it can be updated in several places.
-                var locationMarker = null;
 
                 // Get the location of the user's browser using the
                 // native geolocation service. When we invoke this method
@@ -60,13 +53,9 @@
                 navigator.geolocation.getCurrentPosition(
                     function (position) {
 
-                        // Check to see if there is already a location.
-                        // There is a bug in FireFox where this gets
-                        // invoked more than once with a cahced result.
-                        if (locationMarker) {
-                            return;
+                        if (callback) {
+                            callback(position);
                         }
-
                     },
                     function (error) {
                         console.log("Something went wrong: ", error);
