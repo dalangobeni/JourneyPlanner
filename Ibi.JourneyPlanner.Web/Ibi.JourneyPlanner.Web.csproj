@@ -188,7 +188,6 @@
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\css\font-awesome.css" />
-    <Content Include="Content\css\font-awesome.min.css" />
     <Content Include="Content\css\font\fontawesome-webfont.svg" />
     <Content Include="Content\css\leaflet.awesome-markers.css" />
     <Content Include="Content\css\main.css" />
