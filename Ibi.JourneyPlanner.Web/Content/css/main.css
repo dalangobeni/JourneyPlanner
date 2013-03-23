@@ -1,2 +1,64 @@
 ﻿/* Generic styles */
 b, strong { font-weight: bold; }
+
+/* Layout */
+html,body {
+    background: #9d9fa1;
+    font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+    height: 100%;
+    width: 100%;
+}
+
+header {
+    background: #333;
+    height: 4em;
+    line-height: 4em;
+}
+
+h1 {
+    color: #0190bc;
+    padding: 0 13px;
+    font-size: 1.6em;
+    font-weight: bold;
+}
+
+article {
+    position: absolute;
+    top: 4em;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+aside label {
+    background: #0190bc;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 2px;
+    padding: 0.5em 13px;
+}
+
+    aside label:hover {
+        background: #fb5702;
+    }
+
+@media only screen and (min-width:720px){
+
+    aside {
+        width: 18em;
+    }
+
+        aside ul {
+            list-style-type: none;
+        }
+
+    article {
+        left: 18em;
+    }
+}
