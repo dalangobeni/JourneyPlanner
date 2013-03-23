@@ -19,6 +19,7 @@ namespace Ibi.JourneyPlanner.Web
                         "~/Scripts/jquery.validate*"));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
+                        "~/Scripts/app/leaflet.awesome-markers.js",
                         "~/Scripts/app/formatting.js",
                         "~/Scripts/app/geolocation.js",
                         "~/Scripts/app/routing.js",
@@ -31,7 +32,8 @@ namespace Ibi.JourneyPlanner.Web
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                 "~/Content/css/reset.css", 
-                "~/Content/css/main.css"));
+                "~/Content/css/main.css",
+                "~/Content/css/leaflet.awesome-markers.css"));
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",

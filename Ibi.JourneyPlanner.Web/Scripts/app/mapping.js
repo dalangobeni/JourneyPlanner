@@ -54,8 +54,8 @@
         var layers = [];
 
         layers.push(createLayerData('Car Parks','parking'));
-        layers.push(createLayerData('Bars', 'bar'));
-        layers.push(createLayerData('Fast Food', 'fast_food'));
+        layers.push(createLayerData('Bars', 'bar', 'icon-beer'));
+        layers.push(createLayerData('Fast Food', 'fast_food', 'icon-food'));
         layers.push(createLayerData('Restaurants', 'restaurant'));
         layers.push(createLayerData('Bus Stations', 'bus_station'));
 
@@ -71,7 +71,7 @@
         return url;
     }
     
-    function loadLayerData(layer, amenity) {
+    function loadLayerData(layer, amenity, icon) {
         var url = getRequestUrl(amenity, 500);
         
         var request = $.ajax({
@@ -98,10 +98,19 @@
                         var myStyle = {
                             "color": "#ff7800",
                             "weight": 5,
-                            "opacity": 1
+                            "opacity": 1,
+                            "icon": icon
                         };
 
+                        var geojsonMarkerOptions = L.AwesomeMarkers.icon({
+                            icon: icon,
+                            color: 'red'
+                        });
+
                         L.geoJson(geojsonFeature, {
+                            pointToLayer: function (feature, latlng) {
+                                return L.marker(latlng, { icon: geojsonMarkerOptions });
+                            },
                             style: myStyle,
                             onEachFeature: onEachFeature
                         }).addTo(layer);
@@ -113,7 +122,7 @@
                 //    loadPageBlock(numberOfSitesPerPage, nextPage);
                 //}
 
-                layer.isLoaded = true;
+                layer.extraOptions.isLoaded = true;
             }
         });
     }
@@ -127,8 +136,12 @@
             var thisItem = layers[i];
             var layer = L.featureGroup([]);
 
-            layer.amenityName = thisItem.amenity;
-            layer.isLoaded = false;
+            layer.extraOptions = {
+                amenityName: thisItem.amenity,
+                icon: thisItem.icon,
+                isLoaded: false
+            };
+
 
             overlayMaps[thisItem.name] = layer;
         }
@@ -145,9 +158,10 @@
                 var trimmed = $.trim(text);
 
                 var matchingLayer = overlayMaps[trimmed];
-                if (!matchingLayer.isLoaded) {
-                    var amenity = matchingLayer.amenityName;
-                    loadLayerData(matchingLayer, amenity);
+                if (!matchingLayer.extraOptions.isLoaded) {
+                    var amenity = matchingLayer.extraOptions.amenityName;
+                    var icon = matchingLayer.extraOptions.icon;
+                    loadLayerData(matchingLayer, amenity, icon);
                 }
             }
         });
