@@ -61,6 +61,17 @@
         alert(link.data("action"));
         return false;
     }
+    
+    function addRoutingPoint(position) {
+        routing.addPoint(position, drawRoutes);
+        
+        var options = L.AwesomeMarkers.icon({
+            color: "green",
+            icon: "icon-flag"
+        });
+
+        var marker = L.marker(position, { icon: options }).addTo(map);
+    }
 
     function forEachLayerIcon(feature, layer, color) {
         if (feature.properties) {
@@ -83,7 +94,7 @@
 
                 layer.on('contextmenu', function () {
                     var position = layer.getLatLng();
-                    routing.addPoint(position, drawRoutes);
+                    addRoutingPoint(position);
                 });
             }
         }
@@ -271,9 +282,7 @@
             });
             
             var position = { lat: point.Latitude, lng: point.Longitude };
-            L.marker(position).addTo(map);
-
-            routing.addPoint(position, drawRoutes);
+            addRoutingPoint(position);
         });
     }
 
