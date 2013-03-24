@@ -99,7 +99,8 @@
     function getAvailableLayers() {
         var layers = [];
 
-        layers.push(createLayerData('TfGM Parking','live-parking', 'red'));
+        layers.push(createLayerData('TfGM Parking', 'live-parking', 'red'));
+        layers.push(createLayerData('TfGM Metro Shuttle', 'live-shuttle', 'purple'));
         layers.push(createLayerData('All Car Parking Locations','parking', 'red'));
         layers.push(createLayerData('Bars', 'bar', 'blue','icon-beer'));
         layers.push(createLayerData('Fast Food', 'fast_food', 'green','icon-food'));
@@ -113,6 +114,10 @@
         
         if (amenity === "live-parking") {
             return "/api/live/GetAllCarParks";
+        }
+
+        if (amenity === "live-shuttle") {
+            return "/api/live/GetAllBuses";
         }
 
         var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/nodes?geom&osm::amenity=" + amenity + "&per_page=" + perPage;

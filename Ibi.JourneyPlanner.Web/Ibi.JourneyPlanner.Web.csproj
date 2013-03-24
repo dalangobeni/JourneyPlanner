@@ -182,6 +182,7 @@
     </Compile>
     <Compile Include="Models\Exceptions\RoutingException.cs" />
     <Compile Include="Models\LiveData\CarPark.cs" />
+    <Compile Include="Models\LiveData\MetroShuttle.cs" />
     <Compile Include="Models\LocationModel.cs" />
     <Compile Include="Models\PointToPointModel.cs" />
     <Compile Include="Models\ResolvePointModel.cs" />
