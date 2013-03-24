@@ -16,6 +16,12 @@ namespace Ibi.JourneyPlanner.Web
             );
 
             config.Routes.MapHttpRoute(
+                name: null,
+                routeTemplate: "api/live/{action}/{id}",
+                defaults: new { controller = "LiveData", id = RouteParameter.Optional }
+            );
+
+            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }

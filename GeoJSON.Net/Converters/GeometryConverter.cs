@@ -10,6 +10,7 @@
 namespace GeoJSON.Net.Converters
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using GeoJSON.Net.Geometry;
@@ -41,7 +42,24 @@ namespace GeoJSON.Net.Converters
                 serializer.Serialize(writer, coords);
 
                 writer.WriteEndObject();
+                return;
+            }
 
+            if (value is Point)
+            {
+                var point = value as Point;
+                writer.WriteStartObject();
+
+                var coords = point.Coordinates.Select(x => new[] { x.Longitude, x.Latitude }).First();
+
+                writer.WritePropertyName("type");
+                serializer.Serialize(writer, point.Type.ToString());
+
+                writer.WritePropertyName("coordinates");
+                serializer.Serialize(writer, coords);
+
+
+                writer.WriteEndObject();
                 return;
             }
 

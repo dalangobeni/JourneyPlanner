@@ -16,6 +16,15 @@
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ResultSet"/> class.
+        /// </summary>
+        /// <param name="results">The results.</param>
+        public ResultSet(IEnumerable<GeoJSONObject> results)
+        {
+            this.Results = results;
+        }
+
+        /// <summary>
         /// Gets or sets the results.
         /// </summary>
         /// <value>
