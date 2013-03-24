@@ -286,6 +286,7 @@
     <Content Include="Scripts\app\formatting.js" />
     <Content Include="Scripts\app\geolocation.js" />
     <Content Include="Scripts\app\mapping.js" />
+    <Content Include="Scripts\app\routeManager.js" />
     <Content Include="Scripts\app\routing.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />

@@ -15,12 +15,22 @@
     @Scripts.Render("~/bundles/app")
     <script>
 
-        $(function () {
+        $(function() {
 
-            var getTransportMode = function () {
+            var getTransportMode = function() {
                 var form = $("#transportModes");
                 var selectedMode = $("input[name=mode]:checked", form).val();
                 return selectedMode;
+            };
+
+            var newRouteHandler = function(start, end, path) {
+                routeManager.add({
+                    start: start,
+                    end: end,
+                    path: path
+                });
+
+                console.log(start, end, path);
             };
 
             var mapOptions = {
@@ -28,7 +38,59 @@
                 latitude: 53.4791,
                 longitude: -2.2457,
                 zoom: 15,
-                getTransportMode: getTransportMode
+                getTransportMode: getTransportMode,
+                newRouteListener: newRouteHandler
+            };
+
+            var getRouteId = function(start, end) {
+                var key = start.replace(/[^\w\s]/gi, '') + end.replace(/[^\w\s]/gi, '');
+                return key.replace(/ /g, '');
+            };
+            
+            function highlightRoute(route) {
+                mapping.highlightRoute(route.start.marker, route.end.marker, route.path);
+            }
+            
+            function dehighlightRoute(route) {
+                mapping.dehighlightRoute(route.start.marker, route.end.marker, route.path);
+            }
+
+            var routeChangeHandler = function(routes) {
+                var routeCount = routes.length;
+                 
+                for (var i = routeCount - 1; i >= 0; i--) {
+                    var route = routes[i];
+                    var id = getRouteId(route.start.name, route.end.name);
+
+                    var container = $(".routeinfo");
+                    container.show();
+
+                    var list = $("#routedetails");
+                    if ($("#" + id, list).length == 0) {
+                        var newItem = $("<li id='" + id + "'><a href='#'><b>" + route.start.name + "</b> to <b>" + route.end.name + "</b></a></li>").hide();
+                        list.prepend(newItem);
+                        newItem.slideDown();
+
+                        (function (thisItem, thisRoute) {
+                            
+                            var selectedClass = "selected";
+                            newItem.click(function(e) {
+                                e.preventDefault();
+                                newItem.toggleClass(selectedClass);
+                                
+                                if (newItem.hasClass(selectedClass)) {
+                                    highlightRoute(thisRoute);
+                                } else {
+                                    dehighlightRoute(thisRoute);
+                                }
+                            });
+                            
+                        })(newItem, route);
+                        
+                        newItem.hover(function (e) {
+                        });
+                    }
+                }
             };
 
             mapping.init(mapOptions, function() {
@@ -36,7 +98,7 @@
                 mapping.getTransportModes(function(modes) {
                     if (modes) {
 
-                        var form = $("#transportModes");                        
+                        var form = $("#transportModes");
                         var list = $("<ul />");
                         form.append(list);
 
@@ -49,8 +111,13 @@
                     }
                 });
 
-                $(".findlocation").click(function () {
-                    geolocation.getUserLocation(function (location) {
+                // Set up route handler
+                routeManager.init({
+                    onRoutesChanged: routeChangeHandler
+                });
+
+                $(".findlocation").click(function() {
+                    geolocation.getUserLocation(function(location) {
                         var point = {
                             lat: location.coords.latitude,
                             lng: location.coords.longitude
@@ -63,8 +130,7 @@
                     });
                 });
             });
-        });        
-                
+        });
 
     </script>
 }

@@ -2,7 +2,7 @@
 
     var map,
         getTransportModeFunction,
-        routes = [];
+        newRouteListener;
 
     function onEachFeature(feature, layer) {
         if (feature.properties) {
@@ -36,10 +36,8 @@
     }
     
     function addRoutingPoint(position, name, options) {
-        routing.addPoint(position);
-
-        var color = options.color || "orange";
-        var icon = options.icon || "icon-flag";
+        var color = (options && options.color) || "purple";
+        var icon = (options && options.icon) || "icon-flag";
 
         var iconOptions = L.AwesomeMarkers.icon({
             color: color,
@@ -50,13 +48,42 @@
             icon: iconOptions
         }).bindPopup("<h1>" + name + "</h1>")
             .addTo(map);
+        
+        routing.addPoint(position, name, marker);
+    }
+    
+    function changeMarkerColor(marker, newColor) {
+        var icon = marker.options.icon.options.icon;
+        var iconOptions = L.AwesomeMarkers.icon({
+            color: newColor,
+            icon: icon
+        });
+        
+        marker.setIcon(iconOptions);
+        // marker.bringToFront();
+    }
+    
+    function highlightRoute(start, end, path) {
+        var highlightColor = "orange";
+        changeMarkerColor(start, highlightColor);
+        changeMarkerColor(end, highlightColor);
+        path.setStyle({ color: "#f2952f" });
+        // path.bringToFront();
+    }
+    
+    function dehighlightRoute(start, end, path) {
+        var highlightColor = "purple";
+        changeMarkerColor(start, highlightColor);
+        changeMarkerColor(end, highlightColor);
+        path.setStyle({ color: "#892890" });
+        // path.bringToFront();
     }
 
     function centreOnMyLocation(position) {
         map.setView(position, 20);
     }
 
-    function forEachLayerIcon(feature, layer, displayText, color) {
+    function forEachLayerIcon(feature, layer, displayText, color, icon) {
         if (feature.properties) {
             var props = feature.properties;
             var displayName = props.name || displayText;
@@ -87,7 +114,9 @@
 
             layer.on('contextmenu', function() {
                 var position = layer.getLatLng();
-                addRoutingPoint(position);
+                addRoutingPoint(position, displayName, {
+                    icon: icon
+                });
             });
         }
     }
@@ -168,7 +197,7 @@
                     };
 
                     var myStyle = {
-                        "color": "#ff7800",
+                        "color": "#892890",
                         "weight": 5,
                         "opacity": 1
                     };
@@ -184,7 +213,7 @@
                         },
                         style: myStyle,
                         onEachFeature: function(featureItem, layerItem) {
-                            forEachLayerIcon(featureItem, layerItem, displayText, color);
+                            forEachLayerIcon(featureItem, layerItem, displayText, color, icon);
                         }
                     }).addTo(layer);
 
@@ -244,7 +273,7 @@
         });
     }    
 	
-    function drawRoutes(routesToDraw) {
+    function drawRoutes(routesToDraw, start, end) {
         for (var i = routesToDraw.length - 1; i >= 0; i--) {
             var thisItem = routesToDraw[i];
 
@@ -255,7 +284,7 @@
             };
 
             var myStyle = {
-                "color": "#ff7800",
+                "color": "#892890",
                 "weight": 5,
                 "opacity": 1
             };
@@ -264,6 +293,10 @@
                 style: myStyle,
                 onEachFeature: onEachFeature
             }).addTo(map);
+            
+            if (newRouteListener) {
+                newRouteListener(start, end, path);
+            }
         }
     }
 
@@ -300,6 +333,7 @@
         }).addTo(map);
 
         map.on('contextmenu', onMapClick);
+        newRouteListener = options.newRouteListener;
 
         // loading the required mapping layers for user to select
         loadLayers();
@@ -319,7 +353,9 @@
         getTransportModes: getTransportModes,
         handleContextClick: handleContextClick,
         addPoint: addRoutingPoint,
-        centreOnMyLocation: centreOnMyLocation
+        centreOnMyLocation: centreOnMyLocation,
+        highlightRoute: highlightRoute,
+        dehighlightRoute: dehighlightRoute
     };
 
     window["mapping"] = api;

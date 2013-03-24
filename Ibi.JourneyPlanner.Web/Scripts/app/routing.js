@@ -7,10 +7,10 @@
     function buildRoute(buildRouteHandler, callback) {
 
         var points = {
-            fromLatitude: currentRoute.start.lat,
-            fromLongitude: currentRoute.start.lng,
-            toLatitude: currentRoute.end.lat,
-            toLongitude: currentRoute.end.lng,
+            fromLatitude: currentRoute.start.point.lat,
+            fromLongitude: currentRoute.start.point.lng,
+            toLatitude: currentRoute.end.point.lat,
+            toLongitude: currentRoute.end.point.lng,
         };
 
         var request = $.ajax({
@@ -22,13 +22,16 @@
 
         request.success(function (response) {
             if (response && response.results) {
-                buildRouteHandler(response.results);
+                buildRouteHandler(
+                    response.results,
+                    currentRoute.start,
+                    currentRoute.end);
+            }
+
+            if (callback) {
+                callback();
             }
         });
-        
-        if (callback) {
-            callback();
-        }
     }
     
     function resolvePoint(selectedMode, point, callback) {
@@ -57,29 +60,39 @@
         isRouteInProgress = false;
     }
     
-    function startRoute(point) {
+    function startRoute(point, name, marker) {
         if (isRouteInProgress) {
             resetRoute();
         }
 
-        currentRoute.start = point;
+        currentRoute.start = {
+            point: point,
+            marker: marker,
+            name: name
+        };
+        
         isRouteInProgress = true;
     }
     
-    function endRoute(point, routeCompleteHandler) {
+    function endRoute(point, name, marker) {
         if (isRouteInProgress) {
-            currentRoute.end = point;
+            currentRoute.end = {
+                point: point,
+                marker: marker,
+                name: name
+            };
+            
             buildRoute(routeCompleteHandler, function () {
                 resetRoute();
             });
         }
     }
     
-    function addPoint(point) {
+    function addPoint(point, name, marker) {
         if (!isRouteInProgress) {
-            startRoute(point);
+            startRoute(point, name, marker);
         } else {
-            endRoute(point, routeCompleteHandler);
+            endRoute(point, name, marker);
         }
     }
     
