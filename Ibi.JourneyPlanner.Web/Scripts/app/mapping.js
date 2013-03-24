@@ -51,10 +51,11 @@
                 var journeyTime = feature.properties.journeytime;
                 var speed = props.distance / journeyTime;
 
-                var mph = Math.round(speed * 3600 / 1610.3 * 10) / 10;
+                var miles = formatting.roundNumber(props.distance / 1609.344, 2);
+                var mph = formatting.roundNumber(speed * 3600 / 1610.3, 1);
 
                 var dataItems = [];
-                dataItems.push({ key: "Distance", value: distance + " Km" });
+                dataItems.push({ key: "Distance", value: miles + " miles" });
                 dataItems.push({ key: "Journey Time", value: formatTime(journeyTime) });
                 dataItems.push({ key: "Average Speed", value: mph + " mph" });
 
