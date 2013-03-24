@@ -5,6 +5,42 @@
         newRouteListener,
         externalRouteErrorHandler;
 
+    function formatTime(timeInSeconds) {
+        var secNumb = parseInt(timeInSeconds);
+        var hours = Math.floor(secNumb / 3600);
+        var minutes = Math.floor((secNumb - (hours * 3600)) / 60);
+        var seconds = secNumb - (hours * 3600) - (minutes * 60);
+
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        if (seconds < 10) {
+            seconds = "0" + seconds;
+        }
+        var time = hours + ':' + minutes + ':' + seconds;
+        return time;
+    }
+
+    function buildTableData(dataItems) {
+        var dataItemCount = dataItems.length;
+        if (dataItemCount > 0) {
+            var table = "<table>";
+
+            for (var i = 0; i < dataItemCount; i++) {
+                var item = dataItems[i];
+                table += "<tr><th>" + item.key + "</th><td>" + item.value + "</td></tr>";
+            }
+
+            table += "</table>";
+            return table;
+        }
+
+        return "";
+    }
+
     function onEachFeature(feature, layer) {
         if (feature.properties) {
 
@@ -15,14 +51,15 @@
                 var journeyTime = feature.properties.journeytime;
                 var speed = props.distance / journeyTime;
 
-                var output = {
-                    "Distance": distance + " Km",
-                    "Journey Time": journeyTime + " s",
-                    "Speed": speed + " m/s"
-                };
+                var mph = Math.round(speed * 3600 / 1610.3 * 10) / 10;
 
-                var formatted = formatting.journeyDetails(output);
-                layer.bindPopup(formatted);
+                var dataItems = [];
+                dataItems.push({ key: "Distance", value: distance + " Km" });
+                dataItems.push({ key: "Journey Time", value: formatTime(journeyTime) });
+                dataItems.push({ key: "Average Speed", value: mph + " mph" });
+
+                var output = buildTableData(dataItems);
+                layer.bindPopup(output);
             }
             else if (props.name) {
                 layer.bindPopup(feature.properties.name);
@@ -107,19 +144,7 @@
                 }
             }
 
-            var dataItemCount = dataItems.length;
-            if (dataItemCount > 0) {
-                var table = "<table>";
-
-                for (var i = 0; i < dataItemCount; i++) {
-                    var item = dataItems[i];
-                    table += "<tr><th>" + item.key + "</th><td>" + item.value + "</td></tr>";
-                }
-
-                table += "</table>";
-                content += table;
-            }
-
+            content += buildTableData(dataItems);
             layer.bindPopup(content);
 
             layer.on('contextmenu', function() {
@@ -304,7 +329,7 @@
         });
     }    
 	
-    function drawRoutes(routesToDraw, start, end) {
+    function drawRoutes(routesToDraw, start, end, mode) {
         for (var i = routesToDraw.length - 1; i >= 0; i--) {
             var thisItem = routesToDraw[i];
 
@@ -326,7 +351,7 @@
             }).addTo(map);
             
             if (newRouteListener) {
-                newRouteListener(start, end, path);
+                newRouteListener(start, end, path, mode);
             }
         }
     }

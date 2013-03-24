@@ -27,7 +27,8 @@
                 buildRouteHandler(
                     response.results,
                     currentRoute.start,
-                    currentRoute.end);
+                    currentRoute.end,
+                    currentRoute.mode);
             }
 
             if (callback) {

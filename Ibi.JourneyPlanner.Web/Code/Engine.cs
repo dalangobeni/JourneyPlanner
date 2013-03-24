@@ -77,7 +77,7 @@ namespace Ibi.JourneyPlanner.Web.Code
                                 osmData,
                                 interpreter,
                                 osmData.TagsIndex,
-                                VehicleEnum.Pedestrian);
+                                VehicleEnum.Car);
 
                 // replace this with PBFdataProcessSource when having downloaded a PBF file.
                 var dataProcessorSource = new

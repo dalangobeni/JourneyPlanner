@@ -23,14 +23,13 @@
                 return selectedMode;
             };
 
-            var newRouteHandler = function(start, end, path) {
+            var newRouteHandler = function(start, end, path, mode) {
                 routeManager.add({
                     start: start,
                     end: end,
-                    path: path
+                    path: path,
+                    mode: mode
                 });
-
-                console.log(start, end, path);
             };
 
             var routeErrorHandler = function() {
@@ -62,17 +61,23 @@
 
             var routeChangeHandler = function(routes) {
                 var routeCount = routes.length;
+                var container = $(".routeinfo");
+                
+                if (routeCount > 0) {
+                    $("p", container).hide();
+                } else {
+                    $("p", container).show();
+                }
                  
                 for (var i = routeCount - 1; i >= 0; i--) {
                     var route = routes[i];
                     var id = getRouteId(route.start.name, route.end.name);
 
-                    var container = $(".routeinfo");
                     container.show();
 
                     var list = $("#routedetails");
                     if ($("#" + id, list).length == 0) {
-                        var newItem = $("<li id='" + id + "'><a href='#'><b>" + route.start.name + "</b> to <b>" + route.end.name + "</b></a></li>").hide();
+                        var newItem = $("<li id='" + id + "'><a class='" + route.mode + "' href='#'><b>" + route.start.name + "</b> to <b>" + route.end.name + "</b></a></li>").hide();
                         list.prepend(newItem);
                         newItem.slideDown();
 
@@ -91,9 +96,6 @@
                             });
                             
                         })(newItem, route);
-                        
-                        newItem.hover(function (e) {
-                        });
                     }
                 }
             };
@@ -141,17 +143,19 @@
     </script>
 }
 
-<aside>
-    <form action="#" id="transportModes">
-    </form>
 
     <div class="geolocation-panel">
         <button class="findlocation"><i class="icon-user"></i> Find Me</button>
     </div>
+<aside>
+    <form action="#" id="transportModes">
+    </form>
     
     <div class="routeinfo">
         <h2>Route Info</h2>
-        <ul id="routedetails"></ul>
+        <p>No routes added at the moment. Right click on a couple of points on the map or an item to start routing.</p>
+        <ul id="routedetails">
+        </ul>
     </div>
 </aside>
     

@@ -28,7 +28,7 @@ h2 {
      margin-bottom: 0.4em;
 }
 
-article {
+article, aside {
     position: absolute;
     top: 4em;
     left: 0;
@@ -39,6 +39,12 @@ article {
 #map {
     height: 100%;
     width: 100%;
+}
+
+aside {
+    left: 0; 
+    max-height: 100%;
+    overflow: auto;
 }
 
 aside label {
@@ -56,8 +62,19 @@ aside label {
 
     aside .routeinfo {
         background: #fff;
-        display: none;
+        line-height: 1.2;
         padding: 1em 0;
+    }
+
+    aside #routedetails {
+        overflow: auto;
+        position: relative;
+        bottom: 0;
+    }
+
+    aside p {
+        padding: 1em 13px;
+        padding-top: 0;
     }
 
     aside label:hover {
@@ -109,7 +126,18 @@ aside label {
         color: #666;
         display: block;
         padding: 0.5em 13px;
+        padding-left: 76px;
         text-decoration: none;
+        background-position: 13px 50%;
+        background-repeat: no-repeat;
+    }
+
+    #routedetails li a.Car {
+        background-image: url(/images/driving.png);
+    }
+
+    #routedetails li a.Pedestrian {
+        background-image: url(/images/walking.png);
     }
 
     #routedetails li a:hover {
@@ -117,7 +145,7 @@ aside label {
     }
 
     #routedetails li.selected a {
-        background: #f2952f;
+        background-color: #f2952f;
         color: #fff;
     }
         
@@ -143,7 +171,7 @@ aside label {
 @media only screen and (min-width:720px){
 
     aside {
-        width: 18em;
+        width: 22em;
     }
 
         aside ul {
@@ -151,6 +179,6 @@ aside label {
         }
 
     article {
-        left: 18em;
+        left: 22em;
     }
 }
