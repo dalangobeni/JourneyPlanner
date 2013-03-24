@@ -199,13 +199,16 @@
     function getAvailableLayers() {
         var layers = [];
 
-        layers.push(createLayerData('TfGM Live Parking Information','live-parking', 'red'));
+        layers.push(createLayerData('TfGM Live Parking Information', 'live-parking', 'red'));
         layers.push(createLayerData('TfGM Live Metro Shuttle', 'live-shuttle', 'purple'));
-        layers.push(createLayerData('Car Parking Locations','parking', 'red'));
-        layers.push(createLayerData('Bars', 'bar', 'blue','icon-beer'));
-        layers.push(createLayerData('Fast Food', 'fast_food', 'green','icon-food'));
+        layers.push(createLayerData('Car Parking Locations', 'parking', 'red'));
+        layers.push(createLayerData('Bars', 'bar', 'blue', 'icon-beer'));
+        layers.push(createLayerData('Fast Food', 'fast_food', 'green', 'icon-food'));
+        layers.push(createLayerData('Hospitals', 'hospital', 'darkblue', 'icon-hospital'));
+        layers.push(createLayerData('Clinics', 'clinic', 'darkblue', 'icon-hospital'));
         layers.push(createLayerData('Restaurants', 'restaurant', 'cadetblue', 'icon-glass'));
         layers.push(createLayerData('Bus Stations', 'bus_station', 'orange'));
+        layers.push(createLayerData('Cash Machine', 'atm', 'green', 'icon-money'));
 
         return layers;
     }

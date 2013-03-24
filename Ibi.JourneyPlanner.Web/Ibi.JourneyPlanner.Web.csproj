@@ -279,6 +279,8 @@
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Images\driving.png" />
     <Content Include="Images\geolocation.png" />
+    <Content Include="Images\bus.png" />
+    <Content Include="Images\busstop.png" />
     <Content Include="Images\markers-matte%402x.png" />
     <Content Include="Images\markers-matte.png" />
     <Content Include="Images\markers-plain.png" />
@@ -287,6 +289,7 @@
     <Content Include="Images\markers-soft%402x.png" />
     <Content Include="Images\markers-soft.png" />
     <Content Include="Images\walking.png" />
+    <Content Include="Images\parking.png" />
     <Content Include="Scripts\app\formatting.js" />
     <Content Include="Scripts\app\geolocation.js" />
     <Content Include="Scripts\app\mapping.js" />
