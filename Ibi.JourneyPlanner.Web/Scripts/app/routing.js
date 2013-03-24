@@ -2,7 +2,8 @@
 
     var currentRoute = {},
         isRouteInProgress = false,
-        routeCompleteHandler;
+        routeCompleteHandler,
+        routeErrorHandler;
     
     function buildRoute(buildRouteHandler, callback) {
 
@@ -28,6 +29,16 @@
                     currentRoute.end);
             }
 
+            if (callback) {
+                callback();
+            }
+        });
+
+        request.fail(function(response) {
+            if (routeErrorHandler) {
+                routeErrorHandler(currentRoute, response);
+            }
+            
             if (callback) {
                 callback();
             }
@@ -98,6 +109,7 @@
     
     function init(options) {
         routeCompleteHandler = options.routeCompleteHandler;
+        routeErrorHandler = options.routeErrorHandler;
     }
 
     var api = {

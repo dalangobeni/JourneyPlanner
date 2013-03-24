@@ -33,13 +33,18 @@
                 console.log(start, end, path);
             };
 
+            var routeErrorHandler = function() {
+                alert("Sorry, this route isn't valid using your selected transport mode.");
+            };
+
             var mapOptions = {
                 container: "map",
                 latitude: 53.4791,
                 longitude: -2.2457,
                 zoom: 15,
                 getTransportMode: getTransportMode,
-                newRouteListener: newRouteHandler
+                newRouteListener: newRouteHandler,
+                routeErrorHandler: routeErrorHandler
             };
 
             var getRouteId = function(start, end) {

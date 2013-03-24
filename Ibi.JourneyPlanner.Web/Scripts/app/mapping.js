@@ -2,7 +2,8 @@
 
     var map,
         getTransportModeFunction,
-        newRouteListener;
+        newRouteListener,
+        externalRouteErrorHandler;
 
     function onEachFeature(feature, layer) {
         if (feature.properties) {
@@ -322,6 +323,15 @@
             
         });
     }
+    
+    function routeErrorHandler(route) {
+        map.removeLayer(route.start.marker);
+        map.removeLayer(route.end.marker);
+
+        if (externalRouteErrorHandler) {
+            externalRouteErrorHandler();
+        }
+    }
 
     function init(options, readyCallback) {
         var div = options.container;
@@ -339,13 +349,15 @@
 
         map.on('contextmenu', onMapClick);
         newRouteListener = options.newRouteListener;
+        externalRouteErrorHandler = options.routeErrorHandler;
 
         // loading the required mapping layers for user to select
         loadLayers();
         
         // Set up routing
         routing.init({
-            routeCompleteHandler: drawRoutes
+            routeCompleteHandler: drawRoutes,
+            routeErrorHandler: routeErrorHandler
         });
 
         if (readyCallback) {
