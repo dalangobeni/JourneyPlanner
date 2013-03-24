@@ -34,7 +34,7 @@
             };
 
             var routeErrorHandler = function() {
-                alert("Sorry, this route isn't valid using your selected transport mode.");
+                alert("Sorry, routing isn't available between these points at present.");
             };
 
             var mapOptions = {
@@ -112,6 +112,7 @@
                             var value = modes[mode];
 
                             list.append("<li><label><input type='radio' name='mode' value='" + value + "' name='transportmode' />" + displayText + "</label></li>");
+                            $("input:first", list).attr('checked', 'checked');
                         }
                     }
                 });
@@ -128,7 +129,7 @@
                             lng: location.coords.longitude
                         };
                         mapping.centreOnMyLocation(point);
-                        mapping.addPoint(point, "Your Location", {
+                        mapping.addUserLocation(point, "Your Location", {
                             color: "orange",
                             icon: "icon-user"
                         });
@@ -143,13 +144,14 @@
 <aside>
     <form action="#" id="transportModes">
     </form>
+
+    <div class="geolocation-panel">
+        <button class="findlocation"><i class="icon-user"></i> Find Me</button>
+    </div>
     
     <div class="routeinfo">
         <h2>Route Info</h2>
         <ul id="routedetails"></ul>
-    </div>
-    <div class="geolocation">
-        <input type="button" value="Find my location" class="findlocation"/>
     </div>
 </aside>
     

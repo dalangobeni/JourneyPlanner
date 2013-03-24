@@ -35,8 +35,8 @@ namespace Ibi.JourneyPlanner.Web.Controllers
             var values = new Dictionary<string, string>
                              {
                                  // { "Cycling", VehicleEnum.Bicycle.ToString() },
-                                 { "Walking", VehicleEnum.Pedestrian.ToString() },
                                  { "Driving", VehicleEnum.Car.ToString() },
+                                 { "Walking", VehicleEnum.Pedestrian.ToString() },
                                  // { "Bus", VehicleEnum.Bus.ToString() },
                              };
 

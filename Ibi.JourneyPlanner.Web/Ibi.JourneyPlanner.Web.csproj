@@ -277,6 +277,7 @@
     <None Include="Properties\PublishProfiles\mapchester - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\mapchester - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
+    <Content Include="Images\geolocation.png" />
     <Content Include="Images\markers-matte%402x.png" />
     <Content Include="Images\markers-matte.png" />
     <Content Include="Images\markers-plain.png" />

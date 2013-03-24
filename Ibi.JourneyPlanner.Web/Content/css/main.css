@@ -64,6 +64,19 @@ aside label {
         background: #f2952f;
     }
 
+.geolocation-panel {
+    position: absolute;
+    right: 13px;
+    top: 0;
+    margin: 0.5em 0;
+}
+
+    .geolocation-panel button {
+        cursor: pointer;
+        font-size: 1.2em;
+        padding: 0.4em 1em;
+    }
+
 .contextmenu {
 }
 

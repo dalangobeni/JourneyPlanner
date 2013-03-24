@@ -34,7 +34,7 @@
         var link = $(eventTarget);
         alert(link.data("action"));
         return false;
-    }
+    }   
     
     function addRoutingPoint(position, name, options) {
         var color = (options && options.color) || "purple";
@@ -50,7 +50,14 @@
         }).bindPopup("<h1>" + name + "</h1>")
             .addTo(map);
         
-        routing.addPoint(position, name, marker);
+        marker.on('contextmenu', function () {
+            addRoutingPoint(position, text, {
+                icon: icon
+            });
+        });
+        
+        var selectedMode = getTransportModeFunction();
+        routing.addPoint(selectedMode, position, name, marker);
     }
     
     function changeMarkerColor(marker, newColor) {
@@ -122,6 +129,22 @@
                 });
             });
         }
+    }
+    
+    function addUserLocation(location, text, options) {
+        var iconOptions = L.AwesomeMarkers.icon(options);
+        
+        var marker = L.marker(location, {
+            icon: iconOptions
+        }).bindPopup("<h1>" + text + "</h1>")
+            .addTo(map);
+        
+        marker.on('contextmenu', function () {
+            var position = marker.getLatLng();
+            addRoutingPoint(position, text, {
+                icon: options.icon
+            });
+        });
     }
     
     function getTransportModes(callback) {
@@ -374,7 +397,8 @@
         addPoint: addRoutingPoint,
         centreOnMyLocation: centreOnMyLocation,
         highlightRoute: highlightRoute,
-        dehighlightRoute: dehighlightRoute
+        dehighlightRoute: dehighlightRoute,
+        addUserLocation: addUserLocation
     };
 
     window["mapping"] = api;

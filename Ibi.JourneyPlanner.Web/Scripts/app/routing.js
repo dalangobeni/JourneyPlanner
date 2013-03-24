@@ -12,6 +12,7 @@
             fromLongitude: currentRoute.start.point.lng,
             toLatitude: currentRoute.end.point.lat,
             toLongitude: currentRoute.end.point.lng,
+            transportMode: currentRoute.mode
         };
 
         var request = $.ajax({
@@ -85,8 +86,9 @@
         isRouteInProgress = true;
     }
     
-    function endRoute(point, name, marker) {
+    function endRoute(selectedMode, point, name, marker) {
         if (isRouteInProgress) {
+            currentRoute.mode = selectedMode;
             currentRoute.end = {
                 point: point,
                 marker: marker,
@@ -99,11 +101,11 @@
         }
     }
     
-    function addPoint(point, name, marker) {
+    function addPoint(selectedMode, point, name, marker) {
         if (!isRouteInProgress) {
             startRoute(point, name, marker);
         } else {
-            endRoute(point, name, marker);
+            endRoute(selectedMode, point, name, marker);
         }
     }
     
