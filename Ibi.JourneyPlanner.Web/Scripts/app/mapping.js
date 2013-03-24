@@ -52,6 +52,10 @@
             .addTo(map);
     }
 
+    function centreOnMyLocation(position) {
+        map.setView(position, 20);
+    }
+
     function forEachLayerIcon(feature, layer, displayText, color) {
         if (feature.properties) {
             var props = feature.properties;
@@ -292,7 +296,8 @@
         init: init,
         getTransportModes: getTransportModes,
         handleContextClick: handleContextClick,
-        addPoint: addRoutingPoint
+        addPoint: addRoutingPoint,
+        centreOnMyLocation: centreOnMyLocation
     };
 
     window["mapping"] = api;
