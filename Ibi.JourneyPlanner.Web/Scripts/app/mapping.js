@@ -69,7 +69,9 @@
         changeMarkerColor(start, highlightColor);
         changeMarkerColor(end, highlightColor);
         path.setStyle({ color: "#f2952f" });
-        // path.bringToFront();
+
+        var bounds = path.getBounds();
+        map.fitBounds(bounds);
     }
     
     function dehighlightRoute(start, end, path) {
