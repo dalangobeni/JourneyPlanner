@@ -63,6 +63,26 @@
 
             var content = "<h1 style='color: " + color + "'>" + displayName + "</h1>";
 
+            var dataItems = [];
+            for (var property in props) {
+                if (property != "name") {
+                    dataItems.push({ key: property, value: props[property] });
+                }
+            }
+
+            var dataItemCount = dataItems.length;
+            if (dataItemCount > 0) {
+                var table = "<table>";
+
+                for (var i = 0; i < dataItemCount; i++) {
+                    var item = dataItems[i];
+                    table += "<tr><th>" + item.key + "</th><td>" + item.value + "</td></tr>";
+                }
+
+                table += "</table>";
+                content += table;
+            }
+
             layer.bindPopup(content);
 
             layer.on('contextmenu', function() {
@@ -99,8 +119,8 @@
     function getAvailableLayers() {
         var layers = [];
 
-        layers.push(createLayerData('TfGM Parking','live-parking', 'red'));
-        layers.push(createLayerData('All Car Parking Locations','parking', 'red'));
+        layers.push(createLayerData('TfGM Live Parking Information','live-parking', 'red'));
+        layers.push(createLayerData('Car Parking Locations','parking', 'red'));
         layers.push(createLayerData('Bars', 'bar', 'blue','icon-beer'));
         layers.push(createLayerData('Fast Food', 'fast_food', 'green','icon-food'));
         layers.push(createLayerData('Restaurants', 'restaurant', 'cadetblue', 'icon-glass'));
@@ -136,12 +156,14 @@
             if (response && response.results) {
                 for (var i = response.results.length - 1; i >= 0; i--) {
                     var thisItem = response.results[i];
-                    
+
+                    var properties = thisItem.properties || {
+                        "name": thisItem.name
+                    };
+
                     var geojsonFeature = {
                         "type": "Feature",
-                        "properties": {
-                            "name": thisItem.name
-                        },
+                        "properties": properties,
                         "geometry": thisItem.geom
                     };
 

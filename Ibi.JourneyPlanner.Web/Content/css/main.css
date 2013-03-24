@@ -23,7 +23,7 @@ h1,h2 {
 }
 
 h1 { font-size: 1.6em; }
-h1 { font-size: 1.3em; }
+h2 { font-size: 1.3em; }
 
 article {
     position: absolute;
@@ -83,6 +83,24 @@ aside label {
             color: #fb5702;
         }
         
+.leaflet-popup-content h1 {
+    margin: 0;
+    padding: 0;
+}
+
+.leaflet-popup-content table {
+    width: 100%;
+}
+
+.leaflet-popup-content table th {
+    font-weight: bold;
+}
+
+.leaflet-popup-content td,th {
+    padding: 0.4em;
+    padding-left: 0;
+    text-align: left;
+}
 
 @media only screen and (min-width:720px){
 
