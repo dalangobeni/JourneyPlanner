@@ -232,8 +232,8 @@
         return url;
     }
     
-    function loadLayerData(displayText, layer, amenity, color, icon) {
-        var url = getRequestUrl(amenity, 500);
+    function loadLayerData(displayText, layer, amenity, color, icon, pageNumber) {
+        var url = getRequestUrl(amenity, 500, pageNumber);
         
         var request = $.ajax({
             type: "GET",
@@ -281,10 +281,10 @@
 
                 }
 
-                //var nextPage = response.next_page;
-                //if (nextPage && nextPage > 0) {
-                //    loadPageBlock(numberOfSitesPerPage, nextPage);
-                //}
+                var nextPage = response.next_page;
+                if (nextPage && nextPage > 0) {
+                    loadLayerData(displayText, layer, amenity, color, icon, nextPage);
+                }
 
                 layer.extraOptions.isLoaded = true;
             }
