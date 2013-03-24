@@ -20,6 +20,7 @@ namespace Ibi.JourneyPlanner.Web
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                         "~/Scripts/app/leaflet.awesome-markers.js",
+                        "~/Scripts/app/routeManager.js",
                         "~/Scripts/app/formatting.js",
                         "~/Scripts/app/geolocation.js",
                         "~/Scripts/app/routing.js",

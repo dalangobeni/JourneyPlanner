@@ -2,7 +2,7 @@
 
     var map,
         getTransportModeFunction,
-        routes = [];
+        newRouteListener;
 
     function onEachFeature(feature, layer) {
         if (feature.properties) {
@@ -36,10 +36,8 @@
     }
     
     function addRoutingPoint(position, name, options) {
-        routing.addPoint(position);
-
-        var color = options.color || "orange";
-        var icon = options.icon || "icon-flag";
+        var color = (options && options.color) || "purple";
+        var icon = (options && options.icon) || "icon-flag";
 
         var iconOptions = L.AwesomeMarkers.icon({
             color: color,
@@ -50,24 +48,75 @@
             icon: iconOptions
         }).bindPopup("<h1>" + name + "</h1>")
             .addTo(map);
+        
+        routing.addPoint(position, name, marker);
+    }
+    
+    function changeMarkerColor(marker, newColor) {
+        var icon = marker.options.icon.options.icon;
+        var iconOptions = L.AwesomeMarkers.icon({
+            color: newColor,
+            icon: icon
+        });
+        
+        marker.setIcon(iconOptions);
+        // marker.bringToFront();
+    }
+    
+    function highlightRoute(start, end, path) {
+        var highlightColor = "orange";
+        changeMarkerColor(start, highlightColor);
+        changeMarkerColor(end, highlightColor);
+        path.setStyle({ color: "#f2952f" });
+        // path.bringToFront();
+    }
+    
+    function dehighlightRoute(start, end, path) {
+        var highlightColor = "purple";
+        changeMarkerColor(start, highlightColor);
+        changeMarkerColor(end, highlightColor);
+        path.setStyle({ color: "#892890" });
+        // path.bringToFront();
     }
 
     function centreOnMyLocation(position) {
         map.setView(position, 20);
     }
 
-    function forEachLayerIcon(feature, layer, displayText, color) {
+    function forEachLayerIcon(feature, layer, displayText, color, icon) {
         if (feature.properties) {
             var props = feature.properties;
             var displayName = props.name || displayText;
 
             var content = "<h1 style='color: " + color + "'>" + displayName + "</h1>";
 
+            var dataItems = [];
+            for (var property in props) {
+                if (property != "name") {
+                    dataItems.push({ key: property, value: props[property] });
+                }
+            }
+
+            var dataItemCount = dataItems.length;
+            if (dataItemCount > 0) {
+                var table = "<table>";
+
+                for (var i = 0; i < dataItemCount; i++) {
+                    var item = dataItems[i];
+                    table += "<tr><th>" + item.key + "</th><td>" + item.value + "</td></tr>";
+                }
+
+                table += "</table>";
+                content += table;
+            }
+
             layer.bindPopup(content);
 
             layer.on('contextmenu', function() {
                 var position = layer.getLatLng();
-                addRoutingPoint(position);
+                addRoutingPoint(position, displayName, {
+                    icon: icon
+                });
             });
         }
     }
@@ -99,9 +148,9 @@
     function getAvailableLayers() {
         var layers = [];
 
-        layers.push(createLayerData('TfGM Parking', 'live-parking', 'red'));
-        layers.push(createLayerData('TfGM Metro Shuttle', 'live-shuttle', 'purple'));
-        layers.push(createLayerData('All Car Parking Locations','parking', 'red'));
+        layers.push(createLayerData('TfGM Live Parking Information','live-parking', 'red'));
+        layers.push(createLayerData('TfGM Live Metro Shuttle', 'live-shuttle', 'purple'));
+        layers.push(createLayerData('Car Parking Locations','parking', 'red'));
         layers.push(createLayerData('Bars', 'bar', 'blue','icon-beer'));
         layers.push(createLayerData('Fast Food', 'fast_food', 'green','icon-food'));
         layers.push(createLayerData('Restaurants', 'restaurant', 'cadetblue', 'icon-glass'));
@@ -141,17 +190,19 @@
             if (response && response.results) {
                 for (var i = response.results.length - 1; i >= 0; i--) {
                     var thisItem = response.results[i];
-                    
+
+                    var properties = thisItem.properties || {
+                        "name": thisItem.name
+                    };
+
                     var geojsonFeature = {
                         "type": "Feature",
-                        "properties": {
-                            "name": thisItem.name
-                        },
+                        "properties": properties,
                         "geometry": thisItem.geom
                     };
 
                     var myStyle = {
-                        "color": "#ff7800",
+                        "color": "#892890",
                         "weight": 5,
                         "opacity": 1
                     };
@@ -167,7 +218,7 @@
                         },
                         style: myStyle,
                         onEachFeature: function(featureItem, layerItem) {
-                            forEachLayerIcon(featureItem, layerItem, displayText, color);
+                            forEachLayerIcon(featureItem, layerItem, displayText, color, icon);
                         }
                     }).addTo(layer);
 
@@ -227,7 +278,7 @@
         });
     }    
 	
-    function drawRoutes(routesToDraw) {
+    function drawRoutes(routesToDraw, start, end) {
         for (var i = routesToDraw.length - 1; i >= 0; i--) {
             var thisItem = routesToDraw[i];
 
@@ -238,7 +289,7 @@
             };
 
             var myStyle = {
-                "color": "#ff7800",
+                "color": "#892890",
                 "weight": 5,
                 "opacity": 1
             };
@@ -247,6 +298,10 @@
                 style: myStyle,
                 onEachFeature: onEachFeature
             }).addTo(map);
+            
+            if (newRouteListener) {
+                newRouteListener(start, end, path);
+            }
         }
     }
 
@@ -283,6 +338,7 @@
         }).addTo(map);
 
         map.on('contextmenu', onMapClick);
+        newRouteListener = options.newRouteListener;
 
         // loading the required mapping layers for user to select
         loadLayers();
@@ -302,7 +358,9 @@
         getTransportModes: getTransportModes,
         handleContextClick: handleContextClick,
         addPoint: addRoutingPoint,
-        centreOnMyLocation: centreOnMyLocation
+        centreOnMyLocation: centreOnMyLocation,
+        highlightRoute: highlightRoute,
+        dehighlightRoute: dehighlightRoute
     };
 
     window["mapping"] = api;

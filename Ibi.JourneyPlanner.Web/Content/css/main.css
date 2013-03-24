@@ -23,7 +23,10 @@ h1,h2 {
 }
 
 h1 { font-size: 1.6em; }
-h1 { font-size: 1.3em; }
+h2 {
+     font-size: 1.3em;
+     margin-bottom: 0.4em;
+}
 
 article {
     position: absolute;
@@ -58,7 +61,7 @@ aside label {
     }
 
     aside label:hover {
-        background: #fb5702;
+        background: #f2952f;
     }
 
 .contextmenu {
@@ -80,9 +83,49 @@ aside label {
 
         .contextmenu a:hover {
             background: #222;
-            color: #fb5702;
+            color: #f2952f;
         }
+
+#routedetails li {
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+    #routedetails li a {
+        background: #eee;
+        color: #666;
+        display: block;
+        padding: 0.5em 13px;
+        text-decoration: none;
+    }
+
+    #routedetails li a:hover {
+        color: #333;
+    }
+
+    #routedetails li.selected a {
+        background: #f2952f;
+        color: #fff;
+    }
         
+.leaflet-popup-content h1 {
+    margin: 0;
+    padding: 0;
+}
+
+.leaflet-popup-content table {
+    width: 100%;
+}
+
+.leaflet-popup-content table th {
+    font-weight: bold;
+}
+
+.leaflet-popup-content td,th {
+    padding: 0.4em;
+    padding-left: 0;
+    text-align: left;
+}
 
 @media only screen and (min-width:720px){
 
