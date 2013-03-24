@@ -237,6 +237,8 @@
             dataType: "JSON"
         });
 
+        icon = icon || "icon-map-marker";
+
         request.success(function (response) {
             if (response && response.results) {
                 for (var i = response.results.length - 1; i >= 0; i--) {
