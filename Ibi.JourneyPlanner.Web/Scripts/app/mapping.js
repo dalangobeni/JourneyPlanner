@@ -255,7 +255,7 @@
                     var geojsonFeature = {
                         "type": "Feature",
                         "properties": properties,
-                        "geometry": thisItem.geom
+                        "geometry": thisItem.geometry || thisItem.geom
                     };
 
                     var myStyle = {

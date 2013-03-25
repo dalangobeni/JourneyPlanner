@@ -47,7 +47,7 @@ namespace GeoJSON.Net.Feature
         /// <value>
         /// The geometry.
         /// </value>
-        [JsonProperty(PropertyName = "geom", Required = Required.AllowNull)]
+        [JsonProperty(PropertyName = "geometry", Required = Required.AllowNull)]
         [JsonConverter(typeof(GeometryConverter))]
         public IGeometryObject Geometry { get; set; }
         
