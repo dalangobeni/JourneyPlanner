@@ -243,6 +243,10 @@
 
         icon = icon || "icon-map-marker";
 
+        request.fail(function (requestObject, textStatus, errorThrown) {
+            alert(textStatus + "\n\n" + errorThrown);
+        });
+
         request.success(function (response) {
             if (response && response.results) {
                 for (var i = response.results.length - 1; i >= 0; i--) {
@@ -342,7 +346,7 @@
             var geojsonFeature = {
                 "type": "Feature",
                 "properties": thisItem.properties,
-                "geometry": thisItem.geom
+                "geometry": thisItem.geometry
             };
 
             var myStyle = {

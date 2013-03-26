@@ -16,10 +16,6 @@ namespace Ibi.JourneyPlanner.Web.Controllers
     using System.Net.Http;
     using System.Web.Http;
 
-    using GeoJSON.Net;
-    using GeoJSON.Net.Feature;
-    using GeoJSON.Net.Geometry;
-
     using Ibi.JourneyPlanner.Web.Code;
     using Ibi.JourneyPlanner.Web.Extensions;
     using Ibi.JourneyPlanner.Web.Models;

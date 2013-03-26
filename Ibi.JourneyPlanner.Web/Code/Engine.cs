@@ -14,9 +14,9 @@ namespace Ibi.JourneyPlanner.Web.Code
     using System.Linq;
     using System.Web.Hosting;
 
-    using GeoJSON.Net;
-    using GeoJSON.Net.Feature;
-    using GeoJSON.Net.Geometry;
+    using Geo;
+    using Geo.Geometries;
+    using Geo.IO.GeoJson;
 
     using Ibi.JourneyPlanner.Web.Code.Language;
     using Ibi.JourneyPlanner.Web.Extensions;
@@ -137,7 +137,7 @@ namespace Ibi.JourneyPlanner.Web.Code
             }
 
             var coordinates = route.Entries
-                .Select(x => new GeographicPosition(x.Latitude, x.Longitude) as IPosition)
+                .Select(x => new Coordinate(x.Latitude, x.Longitude))
                 .ToList();
 
             var lineString = new LineString(coordinates);
