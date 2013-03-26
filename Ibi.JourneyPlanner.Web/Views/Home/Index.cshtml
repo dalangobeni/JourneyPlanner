@@ -12,6 +12,8 @@
 @section scripts {
     <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=&sensor=false"></script>
+    <script src="~/Scripts/jquery.signalR-1.0.1.min.js"></script>
+    <script src="~/signalr/hubs"></script>
     @Scripts.Render("~/bundles/app")
     <script>
 
@@ -138,6 +140,19 @@
                     });
                 });
             });
+            
+            // Proxy created on the fly          
+            var tfgm = $.connection.tfgm;
+
+            // Declare a function on the chat hub so the server can invoke it          
+            tfgm.client.addMessage = function (message) {
+                $('#messages ul').append('<li>' + message + '</li>');
+            };
+
+            // Start the connection
+            $.connection.hub.start().done(function () {
+                tfgm.server.heartbeat();
+            });
         });
 
     </script>
@@ -150,6 +165,10 @@
 <aside>
     <form action="#" id="transportModes">
     </form>
+    
+    <div id="messages">
+        <ul></ul>
+    </div>
     
     <div class="routeinfo">
         <h2>Route Info</h2>

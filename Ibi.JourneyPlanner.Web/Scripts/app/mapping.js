@@ -202,6 +202,7 @@
 
         layers.push(createLayerData('TfGM Live Parking Information', 'live-parking', 'red'));
         layers.push(createLayerData('TfGM Live Metro Shuttle', 'live-shuttle', 'purple'));
+        //layers.push(createLayerData('TfGM Metro Shuttle Routes', 'metro-bus-routes', 'purple'));
         layers.push(createLayerData('Car Parking Locations', 'parking', 'red'));
         layers.push(createLayerData('Bars', 'bar', 'blue', 'icon-beer'));
         layers.push(createLayerData('Fast Food', 'fast_food', 'green', 'icon-food'));
@@ -222,6 +223,10 @@
 
         if (amenity === "live-shuttle") {
             return "/api/live/GetAllBuses";
+        }
+
+        if (amenity === "metro-bus-routes") {
+            return "http://api.citysdk.waag.org/admr.uk.gr.manchester/ptlines?geom&per_page=500";
         }
 
         var url = "http://api.citysdk.waag.org/admr.uk.gr.manchester/nodes?geom&osm::amenity=" + amenity + "&per_page=" + perPage;
