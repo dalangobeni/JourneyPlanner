@@ -33,13 +33,13 @@ namespace GeoJSON.Net.Converters
                 var lineString = value as LineString;
                 writer.WriteStartObject();
 
-                var coords = lineString.Coordinates.Select(x => new[] { x.Longitude, x.Latitude }).ToArray();
+                // var coords = lineString.Coordinates.Select(x => new[] { x.Longitude, x.Latitude }).ToArray();
 
                 writer.WritePropertyName("type");
                 serializer.Serialize(writer, lineString.Type.ToString());
 
                 writer.WritePropertyName("coordinates");
-                serializer.Serialize(writer, coords);
+                serializer.Serialize(writer, lineString.Coordinates);
 
                 writer.WriteEndObject();
                 return;

@@ -26,7 +26,7 @@ namespace GeoJSON.Net.Geometry
         /// Initializes a new instance of the <see cref="LineString"/> class.
         /// </summary>
         /// <param name="coordinates">The coordinates.</param>
-        public LineString(List<GeographicPosition> coordinates)
+        public LineString(List<IPosition> coordinates)
         {
             if (coordinates == null)
             {
@@ -48,7 +48,7 @@ namespace GeoJSON.Net.Geometry
         /// <value>The Positions.</value>
         [JsonProperty(PropertyName = "coordinates", Required = Required.Always)]
         [JsonConverter(typeof(PositionConverter))]
-        public List<GeographicPosition> Coordinates { get; private set; }
+        public List<IPosition> Coordinates { get; private set; }
 
         /// <summary>
         /// Determines whether this LineString is a <see cref="http://geojson.org/geojson-spec.html#linestring">LinearRing</see>.

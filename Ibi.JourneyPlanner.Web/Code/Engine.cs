@@ -137,7 +137,7 @@ namespace Ibi.JourneyPlanner.Web.Code
             }
 
             var coordinates = route.Entries
-                .Select(x => new GeographicPosition(x.Latitude, x.Longitude))
+                .Select(x => new GeographicPosition(x.Latitude, x.Longitude) as IPosition)
                 .ToList();
 
             var lineString = new LineString(coordinates);
