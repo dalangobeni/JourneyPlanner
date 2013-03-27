@@ -404,7 +404,7 @@
 
         // add an OpenStreetMap tile layer
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Built by Mark & Kev.'
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Built by <a href="http://www.ibigroup.com/contact/ibi-group-glasgow">IBI Group Glasgow</a>.'
         }).addTo(map);
 
         map.on('contextmenu', onMapClick);
