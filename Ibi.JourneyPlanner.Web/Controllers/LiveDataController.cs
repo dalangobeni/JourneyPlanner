@@ -93,7 +93,7 @@
         private Feature GetFeatureFromCarPark(CarPark carPark)
         {
             // Reversed on purpose; result from API is wrong
-            var coordinates = new Coordinate(carPark.Longitude, carPark.Latitude);
+            var coordinates = new Coordinate(carPark.Latitude, carPark.Longitude);
 
             var lineString = new Point(coordinates);
 
@@ -162,7 +162,7 @@
 
                 while (route <= 3)
                 {
-                    var query = string.Format("routes/met{0}/buses", route);
+                    var query = string.Format("routes/{0}/buses", route);
                     var response = client.GetAsync(query).Result;
 
                     // If it fails - outputs the request string followed by the Http response
